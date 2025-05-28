@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basis Weight Finder Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+            color: #334155;
+            overflow-x: hidden;
+        }
+        .calculator-container {
+            background-color: #ffffff;
+            border-radius: 2.5rem; /* More rounded */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+            padding: 3.5rem;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        h1 {
+            color: #1e3a8a;
+            font-size: 2.75rem; /* Adjusted for calculator page */
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        .description {
+            color: #475569;
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            text-align: left; /* Align description to left */
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #334155;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #cbd5e1;
+            font-size: 1rem;
+            color: #334155;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f8fafc;
+        }
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .select-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #cbd5e1;
+            font-size: 1rem;
+            color: #334155;
+            background-color: #f8fafc;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .select-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .button-primary {
+            background-color: #3b82f6;
+            color: #ffffff;
+            padding: 1rem 2rem;
+            border-radius: 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        .button-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        .result-section {
+            margin-top: 2.5rem;
+            background-color: #e0f7fa; /* Light blue result background */
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 1px solid #a7d9f0;
+            text-align: left;
+        }
+        .result-item {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: #0c4a6e; /* Darker blue for results */
+        }
+        .result-item strong {
+            color: #1e3a8a;
+        }
+        .error-message {
+            color: #ef4444;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .back-button {
+            margin-top: 2rem;
+            display: inline-flex;
+            align-items: center;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        .back-button:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+        .back-button svg {
+            margin-right: 0.5rem;
+        }
+
+        /* Grid for inputs */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .calculator-container {
+                padding: 2.5rem;
+                border-radius: 2rem;
+            }
+            h1 {
+                font-size: 2.25rem;
+            }
+            .description {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            .input-group {
+                margin-bottom: 1rem;
+            }
+            .input-grid {
+                gap: 1rem;
+            }
+            .button-primary {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+            .result-section {
+                padding: 1.5rem;
+            }
+            .result-item {
+                font-size: 1rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+            }
+            h1 {
+                font-size: 1.75rem;
+            }
+            .description {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            .input-grid {
+                grid-template-columns: 1fr; /* Stack inputs on very small screens */
+            }
+            .input-field, .select-field {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            .button-primary {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            .result-section {
+                padding: 1rem;
+            }
+            .result-item {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>Basis Weight Finder Calculator</h1>
+        <p class="description">
+            Basis weight (or grammage) is the weight of paper per unit area, typically expressed in grams per square meter (GSM). It is a key quality parameter indicating the paper's thickness and density. In the paper industry, basis weight is crucial for quality control, production costs, and final product specifications.
+            <br><br>
+            Use this calculator to determine the basis weight (GSM) of your paper **before size press application**, based on the dry stock flow rate from the headbox, paper width, and machine speed.
+        </p>
+
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="stockFlow">Stock Flow (L/min):</label>
+                <input type="number" id="stockFlow" class="input-field" placeholder="contoh: 13800" step="0.01">
+            </div>
+
+            <div class="input-group">
+                <label for="stockConsistency">Stock Consistency (% dry):</label>
+                <input type="number" id="stockConsistency" class="input-field" placeholder="contoh: 4" step="0.01">
+            </div>
+
+            <div class="input-group">
+                <label for="paperWidth">Paper Width (mm):</label>
+                <input type="number" id="paperWidth" class="input-field" placeholder="contoh: 5500" step="0.01">
+            </div>
+
+            <div class="input-group">
+                <label for="speed">Machine Speed (m/min):</label>
+                <input type="number" id="speed" class="input-field" placeholder="contoh: 820" step="0.01">
+            </div>
+        </div>
+
+        <button onclick="calculateBasisWeight()" class="button-primary">Calculate Basis Weight (GSM)</button>
+
+        <div id="errorMessage" class="error-message hidden"></div>
+
+        <div id="results" class="result-section hidden">
+            <div class="result-item">Basis Weight (GSM): <strong id="calculatedGsm"></strong></div>
+        </div>
+
+        <a href="index.html" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Calculators
+        </a>
+    </div>
+
+    <script>
+        function calculateBasisWeight() {
+            const stockFlow = parseFloat(document.getElementById('stockFlow').value);             // L/min (slurry)
+            const stockConsistency = parseFloat(document.getElementById('stockConsistency').value); // % dry
+            const paperWidth = parseFloat(document.getElementById('paperWidth').value);         // mm
+            const speed = parseFloat(document.getElementById('speed').value);                   // m/min
+
+            const errorMessage = document.getElementById('errorMessage');
+            const resultsDiv = document.getElementById('results');
+
+            // Reset error message and hide results
+            errorMessage.classList.add('hidden');
+            resultsDiv.classList.add('hidden');
+
+            // Input validation
+            if (isNaN(stockFlow) || stockFlow <= 0 || isNaN(stockConsistency) || stockConsistency <= 0 || stockConsistency > 100 ||
+                isNaN(paperWidth) || paperWidth <= 0 || isNaN(speed) || speed <= 0) {
+                errorMessage.textContent = 'Please enter valid positive numbers for all fields. Stock Consistency must be between 0-100%.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            // Derivation:
+            // 1. Convert Stock Flow (L/min) to Dry Mass Flow (g/min)
+            //    Assuming slurry density is approximately 1 kg/L.
+            //    Mass Flow Rate of Total Slurry (kg/min) = Stock Flow (L/min) * 1 kg/L
+            //    Mass Flow Rate of Dry Pulp (kg/min) = Mass Flow Rate of Total Slurry (kg/min) * (Stock Consistency / 100)
+            //    Mass Flow Rate of Dry Pulp (g/min) = Mass Flow Rate of Dry Pulp (kg/min) * 1000 g/kg
+
+            //    Simplified: Dry Mass Flow (g/min) = stockFlow * (stockConsistency / 100) * 1000
+
+            // 2. Convert Paper Width (mm) to meters (m)
+            //    Paper Width (m) = paperWidth (mm) / 1000
+
+            // 3. Calculate Area Produced per minute (m²/min)
+            //    Area Produced (m²/min) = Paper Width (m) * Speed (m/min)
+
+            // 4. Calculate GSM (g/m²)
+            //    GSM = Dry Mass Flow (g/min) / Area Produced (m²/min)
+
+            // Combining all:
+            // GSM = (stockFlow * (stockConsistency / 100) * 1000) / ((paperWidth / 1000) * speed)
+            // GSM = (stockFlow * stockConsistency * 10) / (paperWidth / 1000 * speed)
+            // GSM = (stockFlow * stockConsistency * 10 * 1000) / (paperWidth * speed)
+            // GSM = (stockFlow * stockConsistency * 10000) / (paperWidth * speed)
+
+            const calculatedGsm = (stockFlow * stockConsistency * 10000) / (paperWidth * speed);
+
+            // Display results
+            document.getElementById('calculatedGsm').textContent = `${calculatedGsm.toFixed(2)} GSM`;
+            resultsDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+

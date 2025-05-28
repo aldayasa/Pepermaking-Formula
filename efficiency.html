@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Machine Efficiency Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+            color: #334155;
+            overflow-x: hidden;
+        }
+        .calculator-container {
+            background-color: #ffffff;
+            border-radius: 2.5rem; /* More rounded */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+            padding: 3.5rem;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        h1 {
+            color: #1e3a8a;
+            font-size: 2.75rem; /* Adjusted for calculator page */
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        .description {
+            color: #475569;
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            text-align: left; /* Align description to left */
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #334155;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #cbd5e1;
+            font-size: 1rem;
+            color: #334155;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f8fafc;
+        }
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .select-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #cbd5e1;
+            font-size: 1rem;
+            color: #334155;
+            background-color: #f8fafc;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .select-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .button-primary {
+            background-color: #3b82f6;
+            color: #ffffff;
+            padding: 1rem 2rem;
+            border-radius: 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        .button-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        .result-section {
+            margin-top: 2.5rem;
+            background-color: #e0f7fa; /* Light blue result background */
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 1px solid #a7d9f0;
+            text-align: left;
+        }
+        .result-item {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: #0c4a6e; /* Darker blue for results */
+        }
+        .result-item strong {
+            color: #1e3a8a;
+        }
+        .error-message {
+            color: #ef4444;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .back-button {
+            margin-top: 2rem;
+            display: inline-flex;
+            align-items: center;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        .back-button:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+        .back-button svg {
+            margin-right: 0.5rem;
+        }
+
+        /* Grid for inputs */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        /* Specific styles for time inputs */
+        .time-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .time-input-group .input-field {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .calculator-container {
+                padding: 2.5rem;
+                border-radius: 2rem;
+            }
+            h1 {
+                font-size: 2.25rem;
+            }
+            .description {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            .input-group {
+                margin-bottom: 1rem;
+            }
+            .input-grid {
+                gap: 1rem;
+            }
+            .button-primary {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+            .result-section {
+                padding: 1.5rem;
+            }
+            .result-item {
+                font-size: 1rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+            }
+            h1 {
+                font-size: 1.75rem;
+            }
+            .description {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            .input-grid {
+                grid-template-columns: 1fr; /* Stack inputs on very small screens */
+            }
+            .input-field, .select-field {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            .button-primary {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            .result-section {
+                padding: 1rem;
+            }
+            .result-item {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>Paper Machine Efficiency Calculator</h1>
+        <p class="description">
+            This calculator helps you assess the operational efficiency of your paper machine. It calculates the actual operating time, theoretical maximum production, and the overall operational efficiency based on your input parameters, including downtime specified using convenient time pickers.
+        </p>
+
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="totalScheduledOperatingHours">Total Scheduled Operating Hours:</label>
+                <input type="number" id="totalScheduledOperatingHours" class="input-field" placeholder="contoh: 24 (hours per day)" step="0.01">
+            </div>
+
+            <div class="input-group">
+                <label>Unplanned Downtime:</label>
+                <div class="time-input-group">
+                    <input type="time" id="downtimeStart" class="input-field" value="00:00">
+                    <span class="flex items-center text-gray-500">-</span>
+                    <input type="time" id="downtimeEnd" class="input-field" value="00:00">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="actualProductionTons">Actual Paper Production (tons):</label>
+                <input type="number" id="actualProductionTons" class="input-field" placeholder="contoh: 200" step="0.01">
+            </div>
+
+            <div class="input-group">
+                <label for="standardProductionRateTonsPerHour">Standard Production Rate (tons/hour):</label>
+                <input type="number" id="standardProductionRateTonsPerHour" class="input-field" placeholder="contoh: 30 (tons per operating hour)" step="0.01">
+            </div>
+        </div>
+
+        <button onclick="calculateEfficiency()" class="button-primary">Calculate Efficiency</button>
+
+        <div id="errorMessage" class="error-message hidden"></div>
+
+        <div id="results" class="result-section hidden">
+            <div class="result-item">Actual Operating Hours: <strong id="actualOperatingHours"></strong></div>
+            <div class="result-item">Calculated Downtime: <strong id="calculatedDowntime"></strong></div>
+            <div class="result-item">Theoretical Production Possible: <strong id="theoreticalProduction"></strong></div>
+            <div class="result-item">Operational Efficiency: <strong id="operationalEfficiency"></strong></div>
+            <div class="result-item">Lost Production: <strong id="lostProduction"></strong></div>
+        </div>
+
+        <a href="index.html" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Calculators
+        </a>
+    </div>
+
+    <script>
+        function parseTime(timeStr) {
+            const parts = timeStr.split(':');
+            if (parts.length === 2) {
+                const hours = parseInt(parts[0]);
+                const minutes = parseInt(parts[1]);
+                if (!isNaN(hours) && !isNaN(minutes) && hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+                    return hours * 60 + minutes; // Return total minutes
+                }
+            }
+            return null; // Invalid format
+        }
+
+        function calculateEfficiency() {
+            const totalScheduledOperatingHours = parseFloat(document.getElementById('totalScheduledOperatingHours').value);
+            const downtimeStartStr = document.getElementById('downtimeStart').value;
+            const downtimeEndStr = document.getElementById('downtimeEnd').value;
+            const actualProductionTons = parseFloat(document.getElementById('actualProductionTons').value);
+            const standardProductionRateTonsPerHour = parseFloat(document.getElementById('standardProductionRateTonsPerHour').value);
+
+            const errorMessage = document.getElementById('errorMessage');
+            const resultsDiv = document.getElementById('results');
+
+            // Reset error message and hide results
+            errorMessage.classList.add('hidden');
+            resultsDiv.classList.add('hidden');
+
+            // Input validation for numbers
+            if (isNaN(totalScheduledOperatingHours) || totalScheduledOperatingHours <= 0 ||
+                isNaN(actualProductionTons) || actualProductionTons < 0 ||
+                isNaN(standardProductionRateTonsPerHour) || standardProductionRateTonsPerHour <= 0) {
+                errorMessage.textContent = 'Please enter valid positive numbers for all numeric fields.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            // Parse downtime times
+            const startMinutes = parseTime(downtimeStartStr);
+            const endMinutes = parseTime(downtimeEndStr);
+
+            let unplannedDowntimeHours = 0;
+
+            // Only calculate downtime if both are provided and valid
+            if (downtimeStartStr && downtimeEndStr && startMinutes !== null && endMinutes !== null) {
+                if (endMinutes < startMinutes) {
+                    // Handle overnight downtime, contoh: 23:00 to 01:00
+                    // Assume it's within a 24-hour cycle.
+                    unplannedDowntimeHours = (24 * 60 - startMinutes + endMinutes) / 60;
+                } else {
+                    unplannedDowntimeHours = (endMinutes - startMinutes) / 60;
+                }
+
+                if (unplannedDowntimeHours < 0) { // Safeguard, though logic should prevent this
+                    errorMessage.textContent = 'Downtime calculation resulted in a negative value. Please check times.';
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+            } else if ((downtimeStartStr && !downtimeEndStr) || (!downtimeStartStr && downtimeEndStr)) {
+                 errorMessage.textContent = 'Please enter both start and end times for downtime, or leave both empty.';
+                 errorMessage.classList.remove('hidden');
+                 return;
+            } else if (!downtimeStartStr && !downtimeEndStr) {
+                // If both are empty, assume 0 downtime
+                unplannedDowntimeHours = 0;
+            }
+
+
+            // Validate calculated downtime against total scheduled hours
+            if (unplannedDowntimeHours >= totalScheduledOperatingHours) {
+                errorMessage.textContent = 'Calculated downtime cannot be equal to or greater than Total Scheduled Operating Hours.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+
+            // 1. Actual Operating Hours
+            const actualOperatingHours = totalScheduledOperatingHours - unplannedDowntimeHours;
+
+            // 2. Theoretical Production Possible
+            const theoreticalProductionPossible = actualOperatingHours * standardProductionRateTonsPerHour;
+
+            // 3. Operational Efficiency (%)
+            let operationalEfficiency = 0;
+            if (theoreticalProductionPossible > 0) {
+                operationalEfficiency = (actualProductionTons / theoreticalProductionPossible) * 100;
+            }
+
+            // 4. Lost Production (tons)
+            const lostProduction = Math.max(0, theoreticalProductionPossible - actualProductionTons);
+
+            // Display results
+            document.getElementById('actualOperatingHours').textContent = `${actualOperatingHours.toFixed(2)} hours`;
+            document.getElementById('calculatedDowntime').textContent = `${unplannedDowntimeHours.toFixed(2)} hours`;
+            document.getElementById('theoreticalProduction').textContent = `${theoreticalProductionPossible.toFixed(2)} tons`;
+            document.getElementById('operationalEfficiency').textContent = `${operationalEfficiency.toFixed(2)}%`;
+            document.getElementById('lostProduction').textContent = `${lostProduction.toFixed(2)} tons`;
+            resultsDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+

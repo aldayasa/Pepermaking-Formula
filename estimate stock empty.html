@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator Sisa Stock</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .messagebox-overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+    }
+    .messagebox-content {
+      max-width: 90%;
+      width: 400px;
+      z-index: 1001;
+    }
+    .table-input {
+      width: 100%;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.375rem;
+      padding: 0.25rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+    @media (min-width: 640px) {
+      .table-input {
+        padding: 0.5rem;
+        font-size: 1rem;
+      }
+    }
+    .overflow-x-auto::-webkit-scrollbar {
+      display: none;
+    }
+    .overflow-x-auto {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center py-8 px-4">
+  <div class="max-w-4xl w-full bg-white rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 transform transition-all duration-300 hover:scale-[1.01]">
+    <div class="flex flex-col items-center mb-8">
+      <i data-lucide="calculator" class="w-12 h-12 text-blue-600 mb-3"></i>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-blue-800 text-center leading-tight">
+        Kalkulator Total Massa & Sisa Stock
+      </h2>
+      <p class="text-gray-600 mt-2 text-center text-sm sm:text-base">Hitung estimasi massa dan sisa waktu operasional.</p>
+    </div>
+
+    <div class="overflow-x-auto rounded-lg shadow-inner border border-gray-200">
+      <table class="w-full text-sm sm:text-base text-center border-collapse">
+        <thead class="bg-blue-600 text-white">
+          <tr>
+            <th class="p-1 sm:p-2 md:p-3 border-r border-blue-700">Nama Tanki</th>
+            <th class="p-1 sm:p-2 md:p-3 border-r border-blue-700">Consistency (%)</th>
+            <th class="p-1 sm:p-2 md:p-3">Level (%)</th>
+          </tr>
+        </thead>
+        <tbody id="tbody" class="divide-y divide-gray-200"></tbody>
+      </table>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+      <div>
+        <label for="throughput" class="block text-lg font-semibold text-gray-700 mb-2">
+          Throughput (ton/jam):
+        </label>
+        <div class="relative">
+          <input type="number" id="throughput" value="31.442" step="0.001"
+                 class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg">
+          <i data-lucide="gauge" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+        </div>
+      </div>
+      <div class="flex justify-center md:justify-end">
+        <button onclick="calculate()"
+                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg
+                       transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105
+                       focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center text-lg">
+          <i data-lucide="play" class="w-5 h-5 mr-2"></i> Hitung
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="messagebox" class="fixed inset-0 hidden items-center justify-center messagebox-overlay">
+    <div class="messagebox-content bg-white p-8 rounded-xl shadow-2xl relative transform transition-all duration-300 scale-95 opacity-0">
+      <button onclick="hideMessagebox()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition duration-200">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      <div class="flex items-center justify-center mb-6">
+        <i data-lucide="check-circle" class="w-10 h-10 text-green-500 mr-3"></i>
+        <h3 class="text-3xl font-bold text-gray-800">Hasil Perhitungan</h3>
+      </div>
+      <div class="text-center space-y-4">
+        <p class="text-xl font-semibold text-gray-700">Total Massa:</p>
+        <p id="messagebox-total" class="text-4xl font-extrabold text-blue-600">0 ton</p>
+        <p class="text-xl font-semibold text-gray-700">Sisa Waktu Berdasarkan Throughput:</p>
+        <p id="messagebox-sisaWaktuTP" class="text-4xl font-extrabold text-blue-600">0 jam 0 menit</p>
+      </div>
+      <button onclick="hideMessagebox()" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md
+                       transition duration-300 ease-in-out transform hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg">
+        Tutup
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const tanks = [
+      "Dump Tower", "Fractionator Chest", "LF Storage Chest", "SF Storage Chest",
+      "Mixing Chest", "Machine Chest", "Broke System Chest", "Broke Tower 1",
+      "Broke Tower 2", "Recovery Stock Chest"
+    ];
+
+    const defaultData = [
+      [800, 2.9, 70],
+      [160, 2.8, 76],
+      [320, 4.8, 75],
+      [480, 4.6, 70],
+      [160, 4.0, 60],
+      [160, 3.5, 92],
+      [160, 3.0, 45],
+      [600, 2.5, 0],
+      [600, 2.5, 5],
+      [10, 5.0, 40]
+    ];
+
+    const tbody = document.getElementById("tbody");
+    const messagebox = document.getElementById("messagebox");
+    const messageboxContent = messagebox.querySelector('.messagebox-content');
+
+    function populateTable() {
+      tbody.innerHTML = '';
+      tanks.forEach((name, index) => {
+        const [vol, cons, lvl] = defaultData[index];
+        const row = document.createElement("tr");
+        row.className = "hover:bg-blue-50 transition duration-150";
+        row.innerHTML = `
+          <td class="p-1 sm:p-2 md:p-3 text-left font-medium text-gray-700">${name}</td>
+          <td class="p-1 sm:p-2 md:p-3">
+            <input type="number" step="0.01" value="${cons}" class="consistency table-input">
+          </td>
+          <td class="p-1 sm:p-2 md:p-3">
+            <input type="number" step="0.01" value="${lvl}" class="level table-input">
+          </td>
+          <td class="hidden volume">${vol}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function calculate() {
+      const rows = document.querySelectorAll("#tbody tr");
+      let totalMass = 0;
+      rows.forEach(row => {
+        const volume = parseFloat(row.querySelector(".volume").textContent) || 0;
+        const consistency = parseFloat(row.querySelector(".consistency").value) / 100 || 0;
+        const level = parseFloat(row.querySelector(".level").value) / 100 || 0;
+        const mass = volume * consistency * level;
+        totalMass += mass;
+      });
+
+      const throughput = parseFloat(document.getElementById("throughput").value);
+      let remainingTime = "Tidak dapat dihitung (throughput 0)";
+      if (throughput > 0) {
+        const hours = totalMass / throughput;
+        const jam = Math.floor(hours);
+        const menit = Math.round((hours - jam) * 60);
+        remainingTime = `${jam} jam ${menit} menit`;
+      }
+
+      showMessagebox(totalMass.toFixed(3), remainingTime);
+    }
+
+    function showMessagebox(total, time) {
+      document.getElementById("messagebox-total").textContent = `${total} ton`;
+      document.getElementById("messagebox-sisaWaktuTP").textContent = time;
+      messagebox.classList.remove("hidden");
+      messagebox.classList.add("flex");
+      setTimeout(() => {
+        messageboxContent.classList.remove("scale-95", "opacity-0");
+        messageboxContent.classList.add("scale-100", "opacity-100");
+      }, 10);
+    }
+
+    function hideMessagebox() {
+      messageboxContent.classList.remove("scale-100", "opacity-100");
+      messageboxContent.classList.add("scale-95", "opacity-0");
+      setTimeout(() => {
+        messagebox.classList.remove("flex");
+        messagebox.classList.add("hidden");
+      }, 300);
+    }
+
+    window.onload = () => {
+      lucide.createIcons();
+      populateTable();
+    };
+  </script>
+</body>
+</html>

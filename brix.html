@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator BRIX/Suhu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the message box */
+        .message-box-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .message-box {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* shadow-xl */
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+        }
+        .message-box-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: 1.25rem; /* text-xl */
+        }
+        .message-box-content {
+            margin-bottom: 1.5rem;
+            color: #4b5563; /* text-gray-700 */
+        }
+        .message-box-button {
+            background-color: #3b82f6; /* bg-blue-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .message-box-button:hover {
+            background-color: #2563eb; /* bg-blue-600 */
+        }
+        /* Specific styles for message types */
+        .message-box.warning .message-box-title { color: #f59e0b; /* text-yellow-500 */ }
+        .message-box.error .message-box-title { color: #ef4444; /* text-red-500 */ }
+        .message-box.success .message-box-title { color: #22c55e; /* text-green-500 */ }
+        .message-box.info .message-box-title { color: #3b82f6; /* text-blue-500 */ }
+
+        /* Enhanced custom button style for a professional look */
+        .custom-button {
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            font-weight: 600; /* Semi-bold */
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
+            border: none;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            font-family: 'Inter', sans-serif; /* Modern font */
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem; /* Space between icon and text */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+        .custom-button:hover {
+            background-color: #6366f1; /* Indigo 500 on hover */
+            transform: translateY(-2px); /* Lift effect on hover */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        }
+        .custom-button:active {
+            background-color: #3730a3; /* Indigo 800 on click */
+            transform: translateY(0); /* Return to original position */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Smaller shadow on active */
+        }
+
+        /* Style for the result input field - Increased size and width */
+        .result-input {
+            text-align: center;
+            font-size: 1.3em; /* Slightly larger font */
+            background-color: #374151; /* Gray 700 */
+            color: #e5e7eb; /* Gray 200 */
+            border: 1px solid #4b5563; /* Gray 600 */
+            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.7rem; /* Increased padding */
+            width: 100%;
+            max-width: 200px; /* Increased max-width for better visibility */
+            min-width: 138px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); /* Inner shadow */
+            font-family: 'Roboto Mono', monospace; /* Monospace font for numerical results */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 font-sans antialiased flex items-center justify-center min-h-screen p-4">
+    <div id="OBAT" class="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md mx-auto text-white border border-gray-700">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-100 mb-8" style="font-family: 'trebuchet ms', sans-serif; text-shadow: 1px 1px 2px #000;">Kalkulator BRIX</h1>
+
+        <form name="OBATCAL" onsubmit="return false;" class="space-y-6">
+            <div class="flex justify-start mb-4">
+                <button type="reset" onclick="clearForm();" class="custom-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                        <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label for="BRX" class="block text-gray-300 text-sm font-semibold mb-2">Brix</label>
+                    <div class="relative flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 text-gray-400 h-5 w-5">
+                            <path d="M10 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2Z"/><path d="M14 2v6a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V2Z"/><path d="M2 22h20"/><path d="M12 22V10"/>
+                        </svg>
+                        <input type="number" id="BRX" placeholder="Misal: 25"
+                               class="w-full p-3 pl-10 pr-10 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-700 text-gray-100 placeholder-gray-500 transition duration-200 ease-in-out">
+                        <span class="absolute right-3 text-gray-400 font-semibold text-lg">%</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="TMP" class="block text-gray-300 text-sm font-semibold mb-2">Temperature</label>
+                    <div class="relative flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 text-gray-400 h-5 w-5">
+                            <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+                        </svg>
+                        <input type="number" id="TMP" placeholder="Misal: 38"
+                               class="w-full p-3 pl-10 pr-10 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-700 text-gray-100 placeholder-gray-500 transition duration-200 ease-in-out">
+                        <span class="absolute right-3 text-gray-400 font-semibold text-lg">°C</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-6">
+                <span class="block text-gray-300 font-semibold text-base" style="font-family:arial; text-shadow:1px 1px 1px #000;">
+                    Solid Content:
+                </span>
+                <div class="flex items-center gap-2 relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 text-gray-400 h-5 w-5">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 10h8"/><path d="M8 14h8"/><path d="M12 18h0"/>
+                    </svg>
+                    <input
+                        class="result-input pl-10"
+                        type="text"
+                        size="4"
+                        id="HORE"
+                        readonly="">
+                    <span class="text-gray-300 font-semibold text-lg"></span>
+                </div>
+            </div>
+
+            <button class="custom-button w-full mt-6" onclick="calculateValues();">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
+                </svg>
+                Calculate
+            </button>
+        </form>
+
+        <footer class="mt-10 pt-6 border-t border-gray-700 text-center text-gray-400 text-sm">
+            <div class="max-w-xl mx-auto">
+                <p class="mb-1">&copy; <script>document.write(new Date().getFullYear());</script> Ardita Rizki Fauzi</p>
+                <p>PT Dayasa Aria Prima</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="messageBoxOverlay" class="message-box-overlay hidden">
+        <div id="messageBox" class="message-box">
+            <div id="messageBoxTitle" class="message-box-title"></div>
+            <div id="messageBoxContent" class="message-box-content"></div>
+            <button onclick="closeMessageBox()" class="message-box-button">OK</button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Displays a custom message box instead of the browser's alert.
+         * @param {string} message - The main message to display.
+         * @param {string} title - The title of the message box.
+         * @param {string} type - 'warning', 'error', or 'info' to style the message box.
+         */
+        function showMessageBox(message, title = "Info", type = "info") {
+            const overlay = document.getElementById('messageBoxOverlay');
+            const messageBox = document.getElementById('messageBox');
+            const messageBoxTitle = document.getElementById('messageBoxTitle');
+            const messageBoxContent = document.getElementById('messageBoxContent');
+
+            messageBoxTitle.textContent = title;
+            messageBoxContent.textContent = message;
+
+            // Remove previous type classes
+            messageBox.classList.remove('warning', 'error', 'info');
+            // Add current type class
+            messageBox.classList.add(type);
+
+            overlay.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the custom message box.
+         */
+        function closeMessageBox() {
+            document.getElementById('messageBoxOverlay').classList.add('hidden');
+        }
+
+        /**
+         * Performs the calculations based on BRX and TMP inputs and updates the UI.
+         */
+        function calculateValues() {
+            const BRX = parseFloat(document.getElementById("BRX").value);
+            const TMP = parseFloat(document.getElementById("TMP").value);
+
+            // Check if BRX is a valid number
+            if (isNaN(BRX)) {
+                showMessageBox("Datae Isien COK!.", "Kesalahan Input", "error");
+                return;
+            }
+
+            // Check if TMP is a valid number
+            if (isNaN(TMP)) {
+                showMessageBox("Mohon masukkan angka yang valid untuk Suhu.", "Kesalahan Input", "error");
+                return;
+            }
+
+            // Consolidated TMP range check at the beginning
+            if (TMP < 15) {
+                showMessageBox("Waduh COK! Suhune kurang, kudu antara 15–40°C! (Suhu di luar jangkauan, harus 15–40°C)", "Kesalahan Suhu", "warning");
+                document.getElementById("HORE").value = '';
+                return; // Exit if TMP is too low
+            } else if (TMP > 40) {
+                showMessageBox("COK panase! Suhu kudu antara 15–40°C (Harus antara 15°C dan 40°C)", "Kesalahan Suhu", "error");
+                document.getElementById("HORE").value = '';
+                return; // Exit if TMP is too high
+            }
+
+            // Function to calculate interpolated value
+            const interpolate = (val, minRange, maxRange, startVal, endVal) => {
+                if (minRange === maxRange) {
+                    return startVal; // Avoid division by zero if range is zero
+                }
+                return startVal + (val - minRange) * ((endVal - startVal) / (maxRange - minRange));
+            };
+
+            // --- BRX Calculation Block (TR values are calculated internally) ---
+            let TR15, TR16, TR17, TR18, TR19, TR20, TR21, TR22, TR23, TR24, TR25, TR26, TR27, TR28, TR29, TR30, TR31, TR32, TR33, TR34, TR35, TR36, TR37, TR38, TR39, TR40;
+
+            if ((BRX >= 0) && (BRX <= 5)) {
+                TR15 = interpolate(BRX, 0, 5, 0.29, 0.30);
+                TR16 = interpolate(BRX, 0, 5, 0.24, 0.25);
+                TR17 = interpolate(BRX, 0, 5, 0.18, 0.19);
+                TR18 = interpolate(BRX, 0, 5, 0.12, 0.13);
+                TR19 = interpolate(BRX, 0, 5, 0.06, 0.06);
+                TR20 = interpolate(BRX, 0, 5, 0.00, 0.00);
+                TR21 = interpolate(BRX, 0, 5, 0.06, 0.07);
+                TR22 = interpolate(BRX, 0, 5, 0.13, 0.14);
+                TR23 = interpolate(BRX, 0, 5, 0.20, 0.21);
+                TR24 = interpolate(BRX, 0, 5, 0.27, 0.28);
+                TR25 = interpolate(BRX, 0, 5, 0.34, 0.35);
+                TR26 = interpolate(BRX, 0, 5, 0.42, 0.43);
+                TR27 = interpolate(BRX, 0, 5, 0.50, 0.51);
+                TR28 = interpolate(BRX, 0, 5, 0.58, 0.59);
+                TR29 = interpolate(BRX, 0, 5, 0.66, 0.67);
+                TR30 = interpolate(BRX, 0, 5, 0.74, 0.76);
+                TR31 = interpolate(BRX, 0, 5, 0.83, 0.84);
+                TR32 = interpolate(BRX, 0, 5, 0.92, 0.93);
+                TR33 = interpolate(BRX, 0, 5, 1.01, 1.02);
+                TR34 = interpolate(BRX, 0, 5, 1.10, 1.11);
+                TR35 = interpolate(BRX, 0, 5, 1.19, 1.21);
+                TR36 = interpolate(BRX, 0, 5, 1.29, 1.30);
+                TR37 = interpolate(BRX, 0, 5, 1.39, 1.40);
+                TR38 = interpolate(BRX, 0, 5, 1.49, 1.50);
+                TR39 = interpolate(BRX, 0, 5, 1.59, 1.60);
+                TR40 = interpolate(BRX, 0, 5, 1.69, 1.70);
+            } else if ((BRX >= 5) && (BRX <= 10)) {
+                TR15 = interpolate(BRX, 5, 10, 0.30, 0.32);
+                TR16 = interpolate(BRX, 5, 10, 0.25, 0.26);
+                TR17 = interpolate(BRX, 5, 10, 0.19, 0.20);
+                TR18 = interpolate(BRX, 5, 10, 0.13, 0.13);
+                TR19 = interpolate(BRX, 5, 10, 0.06, 0.07);
+                TR20 = interpolate(BRX, 5, 10, 0.00, 0.00);
+                TR21 = interpolate(BRX, 5, 10, 0.07, 0.07);
+                TR22 = interpolate(BRX, 5, 10, 0.14, 0.14);
+                TR23 = interpolate(BRX, 5, 10, 0.21, 0.21);
+                TR24 = interpolate(BRX, 5, 10, 0.28, 0.29);
+                TR25 = interpolate(BRX, 5, 10, 0.35, 0.36);
+                TR26 = interpolate(BRX, 5, 10, 0.43, 0.44);
+                TR27 = interpolate(BRX, 5, 10, 0.51, 0.52);
+                TR28 = interpolate(BRX, 5, 10, 0.59, 0.60);
+                TR29 = interpolate(BRX, 5, 10, 0.67, 0.68);
+                TR30 = interpolate(BRX, 5, 10, 0.76, 0.77);
+                TR31 = interpolate(BRX, 5, 10, 0.84, 0.85);
+                TR32 = interpolate(BRX, 5, 10, 0.93, 0.94);
+                TR33 = interpolate(BRX, 5, 10, 1.02, 1.03);
+                TR34 = interpolate(BRX, 5, 10, 1.11, 1.13);
+                TR35 = interpolate(BRX, 5, 10, 1.21, 1.22);
+                TR36 = interpolate(BRX, 5, 10, 1.30, 1.31);
+                TR37 = interpolate(BRX, 5, 10, 1.40, 1.41);
+                TR38 = interpolate(BRX, 5, 10, 1.50, 1.51);
+                TR39 = interpolate(BRX, 5, 10, 1.60, 1.61);
+                TR40 = interpolate(BRX, 5, 10, 1.70, 1.71);
+            } else if ((BRX >= 10) && (BRX <= 15)) {
+                TR15 = interpolate(BRX, 10, 15, 0.32, 0.33);
+                TR16 = interpolate(BRX, 10, 15, 0.26, 0.27);
+                TR17 = interpolate(BRX, 10, 15, 0.20, 0.20);
+                TR18 = interpolate(BRX, 10, 15, 0.13, 0.14);
+                TR19 = interpolate(BRX, 10, 15, 0.07, 0.07);
+                TR20 = interpolate(BRX, 10, 15, 0.00, 0.00);
+                TR21 = interpolate(BRX, 10, 15, 0.07, 0.07);
+                TR22 = interpolate(BRX, 10, 15, 0.14, 0.14);
+                TR23 = interpolate(BRX, 10, 15, 0.21, 0.22);
+                TR24 = interpolate(BRX, 10, 15, 0.29, 0.29);
+                TR25 = interpolate(BRX, 10, 15, 0.36, 0.37);
+                TR26 = interpolate(BRX, 10, 15, 0.44, 0.45);
+                TR27 = interpolate(BRX, 10, 15, 0.52, 0.53);
+                TR28 = interpolate(BRX, 10, 15, 0.60, 0.61);
+                TR29 = interpolate(BRX, 10, 15, 0.68, 0.70);
+                TR30 = interpolate(BRX, 10, 15, 0.77, 0.78);
+                TR31 = interpolate(BRX, 10, 15, 0.85, 0.87);
+                TR32 = interpolate(BRX, 10, 15, 0.94, 0.96);
+                TR33 = interpolate(BRX, 10, 15, 1.03, 1.05);
+                TR34 = interpolate(BRX, 10, 15, 1.13, 1.14);
+                TR35 = interpolate(BRX, 10, 15, 1.22, 1.23);
+                TR36 = interpolate(BRX, 10, 15, 1.31, 1.33);
+                TR37 = interpolate(BRX, 10, 15, 1.41, 1.42);
+                TR38 = interpolate(BRX, 10, 15, 1.51, 1.52);
+                TR39 = interpolate(BRX, 10, 15, 1.61, 1.62);
+                TR40 = interpolate(BRX, 10, 15, 1.71, 1.72);
+            } else if ((BRX >= 15) && (BRX <= 20)) {
+                TR15 = interpolate(BRX, 15, 20, 0.33, 0.34);
+                TR16 = interpolate(BRX, 15, 20, 0.27, 0.28);
+                TR17 = interpolate(BRX, 15, 20, 0.20, 0.21);
+                TR18 = interpolate(BRX, 15, 20, 0.14, 0.14);
+                TR19 = interpolate(BRX, 15, 20, 0.07, 0.07);
+                TR20 = interpolate(BRX, 15, 20, 0.00, 0.00);
+                TR21 = interpolate(BRX, 15, 20, 0.07, 0.07);
+                TR22 = interpolate(BRX, 15, 20, 0.14, 0.15);
+                TR23 = interpolate(BRX, 15, 20, 0.22, 0.22);
+                TR24 = interpolate(BRX, 15, 20, 0.29, 0.30);
+                TR25 = interpolate(BRX, 15, 20, 0.37, 0.38);
+                TR26 = interpolate(BRX, 15, 20, 0.45, 0.46);
+                TR27 = interpolate(BRX, 15, 20, 0.53, 0.54);
+                TR28 = interpolate(BRX, 15, 20, 0.61, 0.62);
+                TR29 = interpolate(BRX, 15, 20, 0.70, 0.71);
+                TR30 = interpolate(BRX, 15, 20, 0.78, 0.79);
+                TR31 = interpolate(BRX, 15, 20, 0.87, 0.88);
+                TR32 = interpolate(BRX, 15, 20, 0.96, 0.97);
+                TR33 = interpolate(BRX, 15, 20, 1.05, 1.06);
+                TR34 = interpolate(BRX, 15, 20, 1.14, 1.15);
+                TR35 = interpolate(BRX, 15, 20, 1.23, 1.24);
+                TR36 = interpolate(BRX, 15, 20, 1.33, 1.34);
+                TR37 = interpolate(BRX, 15, 20, 1.42, 1.43);
+                TR38 = interpolate(BRX, 15, 20, 1.52, 1.53);
+                TR39 = interpolate(BRX, 15, 20, 1.62, 1.63);
+                TR40 = interpolate(BRX, 15, 20, 1.72, 1.73);
+            } else if ((BRX >= 20) && (BRX <= 25)) {
+                TR15 = interpolate(BRX, 20, 25, 0.34, 0.35);
+                TR16 = interpolate(BRX, 20, 25, 0.28, 0.28);
+                TR17 = interpolate(BRX, 20, 25, 0.21, 0.21);
+                TR18 = interpolate(BRX, 20, 25, 0.14, 0.14);
+                TR19 = interpolate(BRX, 20, 25, 0.07, 0.07);
+                TR20 = interpolate(BRX, 20, 25, 0, 0);
+                TR21 = interpolate(BRX, 20, 25, 0.07, 0.07);
+                TR22 = interpolate(BRX, 20, 25, 0.15, 0.15);
+                TR23 = interpolate(BRX, 20, 25, 0.22, 0.23);
+                TR24 = interpolate(BRX, 20, 25, 0.3, 0.3);
+                TR25 = interpolate(BRX, 20, 25, 0.38, 0.38);
+                TR26 = interpolate(BRX, 20, 25, 0.46, 0.46);
+                TR27 = interpolate(BRX, 20, 25, 0.54, 0.55);
+                TR28 = interpolate(BRX, 20, 25, 0.62, 0.63);
+                TR29 = interpolate(BRX, 20, 25, 0.71, 0.71);
+                TR30 = interpolate(BRX, 20, 25, 0.79, 0.8);
+                TR31 = interpolate(BRX, 20, 25, 0.88, 0.89);
+                TR32 = interpolate(BRX, 20, 25, 0.97, 0.98);
+                TR33 = interpolate(BRX, 20, 25, 1.06, 1.07);
+                TR34 = interpolate(BRX, 20, 25, 1.15, 1.16);
+                TR35 = interpolate(BRX, 20, 25, 1.24, 1.25);
+                TR36 = interpolate(BRX, 20, 25, 1.34, 1.34);
+                TR37 = interpolate(BRX, 20, 25, 1.43, 1.44);
+                TR38 = interpolate(BRX, 20, 25, 1.53, 1.53);
+                TR39 = interpolate(BRX, 20, 25, 1.63, 1.63);
+                TR40 = interpolate(BRX, 20, 25, 1.73, 1.73);
+            } else if ((BRX >= 25) && (BRX <= 30)) {
+                TR15 = interpolate(BRX, 25, 30, 0.35, 0.36);
+                TR16 = interpolate(BRX, 25, 30, 0.28, 0.29);
+                TR17 = interpolate(BRX, 25, 30, 0.21, 0.22);
+                TR18 = interpolate(BRX, 25, 30, 0.14, 0.15);
+                TR19 = interpolate(BRX, 25, 30, 0.07, 0.07);
+                TR20 = interpolate(BRX, 25, 30, 0.00, 0.00);
+                TR21 = interpolate(BRX, 25, 30, 0.07, 0.08);
+                TR22 = interpolate(BRX, 25, 30, 0.15, 0.15);
+                TR23 = interpolate(BRX, 25, 30, 0.23, 0.23);
+                TR24 = interpolate(BRX, 25, 30, 0.3, 0.31);
+                TR25 = interpolate(BRX, 25, 30, 0.38, 0.39);
+                TR26 = interpolate(BRX, 25, 30, 0.46, 0.47);
+                TR27 = interpolate(BRX, 25, 30, 0.55, 0.55);
+                TR28 = interpolate(BRX, 25, 30, 0.63, 0.64);
+                TR29 = interpolate(BRX, 25, 30, 0.71, 0.72);
+                TR30 = interpolate(BRX, 25, 30, 0.80, 0.81);
+                TR31 = interpolate(BRX, 25, 30, 0.89, 0.89);
+                TR32 = interpolate(BRX, 25, 30, 0.98, 0.98);
+                TR33 = interpolate(BRX, 25, 30, 1.07, 1.07);
+                TR34 = interpolate(BRX, 25, 30, 1.16, 1.16);
+                TR35 = interpolate(BRX, 25, 30, 1.25, 1.25);
+                TR36 = interpolate(BRX, 25, 30, 1.34, 1.35);
+                TR37 = interpolate(BRX, 25, 30, 1.44, 1.44);
+                TR38 = interpolate(BRX, 25, 30, 1.53, 1.54);
+                TR39 = interpolate(BRX, 25, 30, 1.63, 1.63);
+                TR40 = interpolate(BRX, 25, 30, 1.73, 1.73);
+            } else if ((BRX >= 30) && (BRX <= 35)) {
+                TR15 = interpolate(BRX, 30, 35, 0.36, 0.37);
+                TR16 = interpolate(BRX, 30, 35, 0.29, 0.30);
+                TR17 = interpolate(BRX, 30, 35, 0.22, 0.22);
+                TR18 = interpolate(BRX, 30, 35, 0.15, 0.15);
+                TR19 = interpolate(BRX, 30, 35, 0.07, 0.08);
+                TR20 = interpolate(BRX, 30, 35, 0.00, 0.00);
+                TR21 = interpolate(BRX, 30, 35, 0.08, 0.08);
+                TR22 = interpolate(BRX, 30, 35, 0.15, 0.15);
+                TR23 = interpolate(BRX, 30, 35, 0.23, 0.23);
+                TR24 = interpolate(BRX, 30, 35, 0.31, 0.31);
+                TR25 = interpolate(BRX, 30, 35, 0.39, 0.39);
+                TR26 = interpolate(BRX, 30, 35, 0.47, 0.47);
+                TR27 = interpolate(BRX, 30, 35, 0.55, 0.56);
+                TR28 = interpolate(BRX, 30, 35, 0.64, 0.64);
+                TR29 = interpolate(BRX, 30, 35, 0.72, 0.73);
+                TR30 = interpolate(BRX, 30, 35, 0.81, 0.81);
+                TR31 = interpolate(BRX, 30, 35, 0.89, 0.90);
+                TR32 = interpolate(BRX, 30, 35, 0.98, 0.99);
+                TR33 = interpolate(BRX, 30, 35, 1.07, 1.08);
+                TR34 = interpolate(BRX, 30, 35, 1.16, 1.17);
+                TR35 = interpolate(BRX, 30, 35, 1.25, 1.26);
+                TR36 = interpolate(BRX, 30, 35, 1.35, 1.35);
+                TR37 = interpolate(BRX, 30, 35, 1.44, 1.44);
+                TR38 = interpolate(BRX, 30, 35, 1.54, 1.54);
+                TR39 = interpolate(BRX, 30, 35, 1.63, 1.63);
+                TR40 = interpolate(BRX, 30, 35, 1.73, 1.73);
+            } else if ((BRX >= 35) && (BRX <= 40)) {
+                TR15 = interpolate(BRX, 35, 40, 0.37, 0.37);
+                TR16 = interpolate(BRX, 35, 40, 0.30, 0.30);
+                TR17 = interpolate(BRX, 35, 40, 0.22, 0.23);
+                TR18 = interpolate(BRX, 35, 40, 0.15, 0.15);
+                TR19 = interpolate(BRX, 35, 40, 0.08, 0.08);
+                TR20 = interpolate(BRX, 35, 40, 0.00, 0.00);
+                TR21 = interpolate(BRX, 35, 40, 0.08, 0.08);
+                TR22 = interpolate(BRX, 35, 40, 0.15, 0.16);
+                TR23 = interpolate(BRX, 35, 40, 0.23, 0.23);
+                TR24 = interpolate(BRX, 35, 40, 0.31, 0.31);
+                TR25 = interpolate(BRX, 35, 40, 0.39, 0.40);
+                TR26 = interpolate(BRX, 35, 40, 0.47, 0.48);
+                TR27 = interpolate(BRX, 35, 40, 0.56, 0.56);
+                TR28 = interpolate(BRX, 35, 40, 0.64, 0.64);
+                TR29 = interpolate(BRX, 35, 40, 0.73, 0.73);
+                TR30 = interpolate(BRX, 35, 40, 0.81, 0.82);
+                TR31 = interpolate(BRX, 35, 40, 0.90, 0.90);
+                TR32 = interpolate(BRX, 35, 40, 0.99, 0.99);
+                TR33 = interpolate(BRX, 35, 40, 1.08, 1.08);
+                TR34 = interpolate(BRX, 35, 40, 1.17, 1.17);
+                TR35 = interpolate(BRX, 35, 40, 1.26, 1.26);
+                TR36 = interpolate(BRX, 35, 40, 1.35, 1.35);
+                TR37 = interpolate(BRX, 35, 40, 1.44, 1.44);
+                TR38 = interpolate(BRX, 35, 40, 1.54, 1.53);
+                TR39 = interpolate(BRX, 35, 40, 1.63, 1.63);
+                TR40 = interpolate(BRX, 35, 40, 1.73, 1.72);
+            } else if ((BRX >= 40) && (BRX <= 45)) {
+                TR15 = interpolate(BRX, 40, 45, 0.37, 0.38);
+                TR16 = interpolate(BRX, 40, 45, 0.30, 0.30);
+                TR17 = interpolate(BRX, 40, 45, 0.23, 0.23);
+                TR18 = interpolate(BRX, 40, 45, 0.15, 0.15);
+                TR19 = interpolate(BRX, 40, 45, 0.08, 0.08);
+                TR20 = interpolate(BRX, 40, 45, 0.00, 0.00);
+                TR21 = interpolate(BRX, 40, 45, 0.08, 0.08);
+                TR22 = interpolate(BRX, 40, 45, 0.16, 0.16);
+                TR23 = interpolate(BRX, 40, 45, 0.23, 0.24);
+                TR24 = interpolate(BRX, 40, 45, 0.31, 0.32);
+                TR25 = interpolate(BRX, 40, 45, 0.40, 0.40);
+                TR26 = interpolate(BRX, 40, 45, 0.48, 0.48);
+                TR27 = interpolate(BRX, 40, 45, 0.56, 0.56);
+                TR28 = interpolate(BRX, 40, 45, 0.64, 0.65);
+                TR29 = interpolate(BRX, 40, 45, 0.73, 0.73);
+                TR30 = interpolate(BRX, 40, 45, 0.82, 0.82);
+                TR31 = interpolate(BRX, 40, 45, 0.90, 0.90);
+                TR32 = interpolate(BRX, 40, 45, 0.99, 0.99);
+                TR33 = interpolate(BRX, 40, 45, 1.08, 1.08);
+                TR34 = interpolate(BRX, 40, 45, 1.17, 1.16);
+                TR35 = interpolate(BRX, 40, 45, 1.26, 1.25);
+                TR36 = interpolate(BRX, 40, 45, 1.35, 1.34);
+                TR37 = interpolate(BRX, 40, 45, 1.44, 1.43);
+                TR38 = interpolate(BRX, 40, 45, 1.53, 1.53);
+                TR39 = interpolate(BRX, 40, 45, 1.63, 1.62);
+                TR40 = interpolate(BRX, 40, 45, 1.72, 1.71);
+            } else if ((BRX >= 45) && (BRX <= 50)) {
+                TR15 = interpolate(BRX, 45, 50, 0.38, 0.38);
+                TR16 = interpolate(BRX, 45, 50, 0.30, 0.31);
+                TR17 = interpolate(BRX, 45, 50, 0.23, 0.23);
+                TR18 = interpolate(BRX, 45, 50, 0.15, 0.15);
+                TR19 = interpolate(BRX, 45, 50, 0.08, 0.08);
+                TR20 = interpolate(BRX, 45, 50, 0.00, 0.00);
+                TR21 = interpolate(BRX, 45, 50, 0.08, 0.08);
+                TR22 = interpolate(BRX, 45, 50, 0.16, 0.16);
+                TR23 = interpolate(BRX, 45, 50, 0.24, 0.24);
+                TR24 = interpolate(BRX, 45, 50, 0.32, 0.32);
+                TR25 = interpolate(BRX, 45, 50, 0.40, 0.40);
+                TR26 = interpolate(BRX, 45, 50, 0.48, 0.48);
+                TR27 = interpolate(BRX, 45, 50, 0.56, 0.56);
+                TR28 = interpolate(BRX, 45, 50, 0.65, 0.65);
+                TR29 = interpolate(BRX, 45, 50, 0.73, 0.73);
+                TR30 = interpolate(BRX, 45, 50, 0.82, 0.81);
+                TR31 = interpolate(BRX, 45, 50, 0.90, 0.90);
+                TR32 = interpolate(BRX, 45, 50, 0.99, 0.99);
+                TR33 = interpolate(BRX, 45, 50, 1.08, 1.07);
+                TR34 = interpolate(BRX, 45, 50, 1.16, 1.16);
+                TR35 = interpolate(BRX, 45, 50, 1.25, 1.25);
+                TR36 = interpolate(BRX, 45, 50, 1.34, 1.34);
+                TR37 = interpolate(BRX, 45, 50, 1.43, 1.43);
+                TR38 = interpolate(BRX, 45, 50, 1.53, 1.52);
+                TR39 = interpolate(BRX, 45, 50, 1.62, 1.61);
+                TR40 = interpolate(BRX, 45, 50, 1.71, 1.70);
+            } else if ((BRX >= 50) && (BRX <= 55)) {
+                TR15 = interpolate(BRX, 50, 55, 0.38, 0.38);
+                TR16 = interpolate(BRX, 50, 55, 0.31, 0.31);
+                TR17 = interpolate(BRX, 50, 55, 0.23, 0.23);
+                TR18 = interpolate(BRX, 50, 55, 0.15, 0.15);
+                TR19 = interpolate(BRX, 50, 55, 0.08, 0.08);
+                TR20 = interpolate(BRX, 50, 55, 0.00, 0.00);
+                TR21 = interpolate(BRX, 50, 55, 0.08, 0.08);
+                TR22 = interpolate(BRX, 50, 55, 0.16, 0.16);
+                TR23 = interpolate(BRX, 50, 55, 0.24, 0.24);
+                TR24 = interpolate(BRX, 50, 55, 0.32, 0.32);
+                TR25 = interpolate(BRX, 50, 55, 0.40, 0.40);
+                TR26 = interpolate(BRX, 50, 55, 0.48, 0.48);
+                TR27 = interpolate(BRX, 50, 55, 0.56, 0.56);
+                TR28 = interpolate(BRX, 50, 55, 0.65, 0.64);
+                TR29 = interpolate(BRX, 50, 55, 0.73, 0.73);
+                TR30 = interpolate(BRX, 50, 55, 0.81, 0.81);
+                TR31 = interpolate(BRX, 50, 55, 0.90, 0.89);
+                TR32 = interpolate(BRX, 50, 55, 0.99, 0.98);
+                TR33 = interpolate(BRX, 50, 55, 1.07, 1.07);
+                TR34 = interpolate(BRX, 50, 55, 1.16, 1.15);
+                TR35 = interpolate(BRX, 50, 55, 1.25, 1.24);
+                TR36 = interpolate(BRX, 50, 55, 1.34, 1.33);
+                TR37 = interpolate(BRX, 50, 55, 1.43, 1.41);
+                TR38 = interpolate(BRX, 50, 55, 1.52, 1.52);
+                TR39 = interpolate(BRX, 50, 55, 1.61, 1.59);
+                TR40 = interpolate(BRX, 50, 55, 1.70, 1.68);
+            } else if ((BRX >= 55) && (BRX <= 60)) {
+                TR15 = interpolate(BRX, 55, 60, 0.38, 0.38);
+                TR16 = interpolate(BRX, 55, 60, 0.31, 0.31);
+                TR17 = interpolate(BRX, 55, 60, 0.23, 0.23);
+                TR18 = interpolate(BRX, 55, 60, 0.15, 0.15);
+                TR19 = interpolate(BRX, 55, 60, 0.08, 0.08);
+                TR20 = interpolate(BRX, 55, 60, 0.00, 0.00);
+                TR21 = interpolate(BRX, 55, 60, 0.08, 0.08);
+                TR22 = interpolate(BRX, 55, 60, 0.16, 0.16);
+                TR23 = interpolate(BRX, 55, 60, 0.24, 0.24);
+                TR24 = interpolate(BRX, 55, 60, 0.32, 0.32);
+                TR25 = interpolate(BRX, 55, 60, 0.40, 0.40);
+                TR26 = interpolate(BRX, 55, 60, 0.48, 0.48);
+                TR27 = interpolate(BRX, 55, 60, 0.56, 0.56);
+                TR28 = interpolate(BRX, 55, 60, 0.64, 0.64);
+                TR29 = interpolate(BRX, 55, 60, 0.73, 0.72);
+                TR30 = interpolate(BRX, 55, 60, 0.81, 0.80);
+                TR31 = interpolate(BRX, 55, 60, 0.89, 0.89);
+                TR32 = interpolate(BRX, 55, 60, 0.98, 0.97);
+                TR33 = interpolate(BRX, 55, 60, 1.07, 1.06);
+                TR34 = interpolate(BRX, 55, 60, 1.15, 1.14);
+                TR35 = interpolate(BRX, 55, 60, 1.24, 1.23);
+                TR36 = interpolate(BRX, 55, 60, 1.33, 1.31);
+                TR37 = interpolate(BRX, 55, 60, 1.41, 1.40);
+                TR38 = interpolate(BRX, 55, 60, 1.52, 1.48);
+                TR39 = interpolate(BRX, 55, 60, 1.59, 1.57);
+                TR40 = interpolate(BRX, 55, 60, 1.68, 1.66);
+            } else if ((BRX >= 60) && (BRX <= 65)) {
+                TR15 = interpolate(BRX, 60, 65, 0.38, 0.38);
+                TR16 = interpolate(BRX, 60, 65, 0.31, 0.31);
+                TR17 = interpolate(BRX, 60, 65, 0.23, 0.23);
+                TR18 = interpolate(BRX, 60, 65, 0.15, 0.15);
+                TR19 = interpolate(BRX, 60, 65, 0.08, 0.08);
+                TR20 = interpolate(BRX, 60, 65, 0.00, 0.00);
+                TR21 = interpolate(BRX, 60, 65, 0.08, 0.08);
+                TR22 = interpolate(BRX, 60, 65, 0.16, 0.16);
+                TR23 = interpolate(BRX, 60, 65, 0.24, 0.23);
+                TR24 = interpolate(BRX, 60, 65, 0.32, 0.31);
+                TR25 = interpolate(BRX, 60, 65, 0.40, 0.39);
+                TR26 = interpolate(BRX, 60, 65, 0.48, 0.47);
+                TR27 = interpolate(BRX, 60, 65, 0.56, 0.55);
+                TR28 = interpolate(BRX, 60, 65, 0.64, 0.63);
+                TR29 = interpolate(BRX, 60, 65, 0.72, 0.72);
+                TR30 = interpolate(BRX, 60, 65, 0.80, 0.80);
+                TR31 = interpolate(BRX, 60, 65, 0.89, 0.88);
+                TR32 = interpolate(BRX, 60, 65, 0.97, 0.96);
+                TR33 = interpolate(BRX, 60, 65, 1.06, 1.04);
+                TR34 = interpolate(BRX, 60, 65, 1.14, 1.13);
+                TR35 = interpolate(BRX, 60, 65, 1.23, 1.21);
+                TR36 = interpolate(BRX, 60, 65, 1.31, 1.29);
+                TR37 = interpolate(BRX, 60, 65, 1.40, 1.38);
+                TR38 = interpolate(BRX, 60, 65, 1.48, 1.46);
+                TR39 = interpolate(BRX, 60, 65, 1.57, 1.55);
+                TR40 = interpolate(BRX, 60, 65, 1.66, 1.63);
+            } else if ((BRX >= 65) && (BRX <= 70)) {
+                TR15 = interpolate(BRX, 65, 70, 0.38, 0.38);
+                TR16 = interpolate(BRX, 65, 70, 0.31, 0.31);
+                TR17 = interpolate(BRX, 65, 70, 0.23, 0.23);
+                TR18 = interpolate(BRX, 65, 70, 0.15, 0.15);
+                TR19 = interpolate(BRX, 65, 70, 0.08, 0.08);
+                TR20 = interpolate(BRX, 65, 70, 0.00, 0.00);
+                TR21 = interpolate(BRX, 65, 70, 0.08, 0.08);
+                TR22 = interpolate(BRX, 65, 70, 0.16, 0.15);
+                TR23 = interpolate(BRX, 65, 70, 0.23, 0.23);
+                TR24 = interpolate(BRX, 65, 70, 0.31, 0.31);
+                TR25 = interpolate(BRX, 65, 70, 0.39, 0.39);
+                TR26 = interpolate(BRX, 65, 70, 0.47, 0.47);
+                TR27 = interpolate(BRX, 65, 70, 0.55, 0.55);
+                TR28 = interpolate(BRX, 65, 70, 0.63, 0.63);
+                TR29 = interpolate(BRX, 65, 70, 0.72, 0.71);
+                TR30 = interpolate(BRX, 65, 70, 0.80, 0.79);
+                TR31 = interpolate(BRX, 65, 70, 0.88, 0.87);
+                TR32 = interpolate(BRX, 65, 70, 0.96, 0.95);
+                TR33 = interpolate(BRX, 65, 70, 1.04, 1.03);
+                TR34 = interpolate(BRX, 65, 70, 1.13, 1.11);
+                TR35 = interpolate(BRX, 65, 70, 1.21, 1.19);
+                TR36 = interpolate(BRX, 65, 70, 1.29, 1.28);
+                TR37 = interpolate(BRX, 65, 70, 1.38, 1.36);
+                TR38 = interpolate(BRX, 65, 70, 1.46, 1.44);
+                TR39 = interpolate(BRX, 65, 70, 1.55, 1.52);
+                TR40 = interpolate(BRX, 65, 70, 1.63, 1.61);
+            } else if ((BRX >= 70) && (BRX <= 75)) {
+                TR15 = interpolate(BRX, 70, 75, 0.38, 0.38);
+                TR16 = interpolate(BRX, 70, 75, 0.31, 0.30);
+                TR17 = interpolate(BRX, 70, 75, 0.23, 0.23);
+                TR18 = interpolate(BRX, 70, 75, 0.15, 0.15);
+                TR19 = interpolate(BRX, 70, 75, 0.08, 0.08);
+                TR20 = interpolate(BRX, 70, 75, 0.00, 0.00);
+                TR21 = interpolate(BRX, 70, 75, 0.08, 0.08);
+                TR22 = interpolate(BRX, 70, 75, 0.15, 0.15);
+                TR23 = interpolate(BRX, 70, 75, 0.23, 0.23);
+                TR24 = interpolate(BRX, 70, 75, 0.31, 0.31);
+                TR25 = interpolate(BRX, 70, 75, 0.39, 0.38);
+                TR26 = interpolate(BRX, 70, 75, 0.47, 0.46);
+                TR27 = interpolate(BRX, 70, 75, 0.55, 0.54);
+                TR28 = interpolate(BRX, 70, 75, 0.63, 0.62);
+                TR29 = interpolate(BRX, 70, 75, 0.71, 0.70);
+                TR30 = interpolate(BRX, 70, 75, 0.79, 0.78);
+                TR31 = interpolate(BRX, 70, 75, 0.87, 0.86);
+                TR32 = interpolate(BRX, 70, 75, 0.95, 0.93);
+                TR33 = interpolate(BRX, 70, 75, 1.03, 1.01);
+                TR34 = interpolate(BRX, 70, 75, 1.11, 1.09);
+                TR35 = interpolate(BRX, 70, 75, 1.19, 1.17);
+                TR36 = interpolate(BRX, 70, 75, 1.28, 1.25);
+                TR37 = interpolate(BRX, 70, 75, 1.36, 1.33);
+                TR38 = interpolate(BRX, 70, 75, 1.44, 1.42);
+                TR39 = interpolate(BRX, 70, 75, 1.52, 1.50);
+                TR40 = interpolate(BRX, 70, 75, 1.61, 1.58);
+            } else if ((BRX >= 75) && (BRX <= 80)) {
+                TR15 = interpolate(BRX, 75, 80, 0.38, 0.37);
+                TR16 = interpolate(BRX, 75, 80, 0.30, 0.30);
+                TR17 = interpolate(BRX, 75, 80, 0.23, 0.23);
+                TR18 = interpolate(BRX, 75, 80, 0.15, 0.15);
+                TR19 = interpolate(BRX, 75, 80, 0.08, 0.08);
+                TR20 = interpolate(BRX, 75, 80, 0.00, 0.00);
+                TR21 = interpolate(BRX, 75, 80, 0.08, 0.08);
+                TR22 = interpolate(BRX, 75, 80, 0.15, 0.15);
+                TR23 = interpolate(BRX, 75, 80, 0.23, 0.23);
+                TR24 = interpolate(BRX, 75, 80, 0.31, 0.30);
+                TR25 = interpolate(BRX, 75, 80, 0.38, 0.38);
+                TR26 = interpolate(BRX, 75, 80, 0.46, 0.46);
+                TR27 = interpolate(BRX, 75, 80, 0.54, 0.53);
+                TR28 = interpolate(BRX, 75, 80, 0.62, 0.61);
+                TR29 = interpolate(BRX, 75, 80, 0.70, 0.69);
+                TR30 = interpolate(BRX, 75, 80, 0.78, 0.76);
+                TR31 = interpolate(BRX, 75, 80, 0.86, 0.84);
+                TR32 = interpolate(BRX, 75, 80, 0.93, 0.92);
+                TR33 = interpolate(BRX, 75, 80, 1.01, 1.00);
+                TR34 = interpolate(BRX, 75, 80, 1.09, 1.07);
+                TR35 = interpolate(BRX, 75, 80, 1.17, 1.15);
+                TR36 = interpolate(BRX, 75, 80, 1.25, 1.23);
+                TR37 = interpolate(BRX, 75, 80, 1.33, 1.31);
+                TR38 = interpolate(BRX, 75, 80, 1.42, 1.39);
+                TR39 = interpolate(BRX, 75, 80, 1.50, 1.47);
+                TR40 = interpolate(BRX, 75, 80, 1.58, 1.54);
+            } else if ((BRX >= 80) && (BRX <= 85)) {
+                TR15 = interpolate(BRX, 80, 85, 0.37, 0.37);
+                TR16 = interpolate(BRX, 80, 85, 0.3, 0.3);
+                TR17 = interpolate(BRX, 80, 85, 0.23, 0.22);
+                TR18 = interpolate(BRX, 80, 85, 0.15, 0.15);
+                TR19 = interpolate(BRX, 80, 85, 0.08, 0.07);
+                TR20 = interpolate(BRX, 80, 85, 0, 0);
+                TR21 = interpolate(BRX, 80, 85, 0.08, 0.07);
+                TR22 = interpolate(BRX, 80, 85, 0.15, 0.15);
+                TR23 = interpolate(BRX, 80, 85, 0.23, 0.22);
+                TR24 = interpolate(BRX, 80, 85, 0.3, 0.3);
+                TR25 = interpolate(BRX, 80, 85, 0.38, 0.37);
+                TR26 = interpolate(BRX, 80, 85, 0.46, 0.45);
+                TR27 = interpolate(BRX, 80, 85, 0.53, 0.52);
+                TR28 = interpolate(BRX, 80, 85, 0.61, 0.6);
+                TR29 = interpolate(BRX, 80, 85, 0.69, 0.67);
+                TR30 = interpolate(BRX, 80, 85, 0.76, 0.75);
+                TR31 = interpolate(BRX, 80, 85, 0.84, 0.82);
+                TR32 = interpolate(BRX, 80, 85, 0.92, 0.9);
+                TR33 = interpolate(BRX, 80, 85, 1, 0.98);
+                TR34 = interpolate(BRX, 80, 85, 1.07, 1.05);
+                TR35 = interpolate(BRX, 80, 85, 1.15, 1.13);
+                TR36 = interpolate(BRX, 80, 85, 1.23, 1.2);
+                TR37 = interpolate(BRX, 80, 85, 1.31, 1.28);
+                TR38 = interpolate(BRX, 80, 85, 1.39, 1.36);
+                TR39 = interpolate(BRX, 80, 85, 1.47, 1.43);
+                TR40 = interpolate(BRX, 80, 85, 1.54, 1.51);
+            } else {
+                showMessageBox("BRX di luar rentang yang didukung (0-85).", "BRX Di Luar Jangkauan", "warning");
+                document.getElementById("HORE").value = '';
+                return; // Exit if BRX is out of implemented ranges
+            }
+
+            let UHUY_val;
+
+            // --- TMP Calculation Block for UHUY (now that TMP is guaranteed to be 15-40) ---
+            if ((TMP >= 15) && (TMP <= 16)) {
+                UHUY_val = interpolate(TMP, 15, 16, TR15, TR16);
+            } else if ((TMP >= 16) && (TMP <= 17)) {
+                UHUY_val = interpolate(TMP, 16, 17, TR16, TR17);
+            } else if ((TMP >= 17) && (TMP <= 18)) {
+                UHUY_val = interpolate(TMP, 17, 18, TR17, TR18);
+            } else if ((TMP >= 18) && (TMP <= 19)) {
+                UHUY_val = interpolate(TMP, 18, 19, TR18, TR19);
+            } else if ((TMP >= 19) && (TMP <= 20)) {
+                UHUY_val = interpolate(TMP, 19, 20, TR19, TR20);
+            } else if ((TMP >= 20) && (TMP <= 21)) {
+                UHUY_val = interpolate(TMP, 20, 21, TR20, TR21);
+            } else if ((TMP >= 21) && (TMP <= 22)) {
+                UHUY_val = interpolate(TMP, 21, 22, TR21, TR22);
+            } else if ((TMP >= 22) && (TMP <= 23)) {
+                UHUY_val = interpolate(TMP, 22, 23, TR22, TR23);
+            } else if ((TMP >= 23) && (TMP <= 24)) {
+                UHUY_val = interpolate(TMP, 23, 24, TR23, TR24);
+            } else if ((TMP >= 24) && (TMP <= 25)) {
+                UHUY_val = interpolate(TMP, 24, 25, TR24, TR25);
+            } else if ((TMP >= 25) && (TMP <= 26)) {
+                UHUY_val = interpolate(TMP, 25, 26, TR25, TR26);
+            } else if ((TMP >= 26) && (TMP <= 27)) {
+                UHUY_val = interpolate(TMP, 26, 27, TR26, TR27);
+            } else if ((TMP >= 27) && (TMP <= 28)) {
+                UHUY_val = interpolate(TMP, 27, 28, TR27, TR28);
+            } else if ((TMP >= 28) && (TMP <= 29)) {
+                UHUY_val = interpolate(TMP, 28, 29, TR28, TR29);
+            } else if ((TMP >= 29) && (TMP <= 30)) {
+                UHUY_val = interpolate(TMP, 29, 30, TR29, TR30);
+            } else if ((TMP >= 30) && (TMP <= 31)) {
+                UHUY_val = interpolate(TMP, 30, 31, TR30, TR31);
+            } else if ((TMP >= 31) && (TMP <= 32)) {
+                UHUY_val = interpolate(TMP, 31, 32, TR31, TR32);
+            } else if ((TMP >= 32) && (TMP <= 33)) {
+                UHUY_val = interpolate(TMP, 32, 33, TR32, TR33);
+            } else if ((TMP >= 33) && (TMP <= 34)) {
+                UHUY_val = interpolate(TMP, 33, 34, TR33, TR34);
+            } else if ((TMP >= 34) && (TMP <= 35)) {
+                UHUY_val = interpolate(TMP, 34, 35, TR34, TR35);
+            } else if ((TMP >= 35) && (TMP <= 36)) {
+                UHUY_val = interpolate(TMP, 35, 36, TR35, TR36);
+            } else if ((TMP >= 36) && (TMP <= 37)) {
+                UHUY_val = interpolate(TMP, 36, 37, TR36, TR37);
+            } else if ((TMP >= 37) && (TMP <= 38)) {
+                UHUY_val = interpolate(TMP, 37, 38, TR37, TR38);
+            } else if ((TMP >= 38) && (TMP <= 39)) {
+                UHUY_val = interpolate(TMP, 38, 39, TR38, TR39);
+            } else if ((TMP >= 39) && (TMP <= 40)) {
+                UHUY_val = interpolate(TMP, 39, 40, TR39, TR40);
+            }
+
+            const UHUY = UHUY_val;
+
+            // --- TMP Calculation Block for HORE (Solid Content) ---
+            if ((TMP >= 15) && (TMP < 20)) {
+                document.getElementById("HORE").value = (BRX - UHUY).toFixed(2) + ' %';
+            } else if (TMP === 20) {
+                document.getElementById("HORE").value = BRX.toFixed(2) + ' %';
+            } else if ((TMP > 20) && (TMP <= 40)) {
+                document.getElementById("HORE").value = (BRX + UHUY).toFixed(2) + ' %';
+            }
+        }
+    </script>
+</body>
+</html>
+

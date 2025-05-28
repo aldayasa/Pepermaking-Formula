@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Calculator Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Softer, brighter gradient */
+            display: flex;
+            flex-direction: column; /* Changed to column to allow footer to sit at the bottom */
+            justify-content: space-between; /* Distribute space between content and footer */
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+            color: #334155;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        .main-content-wrapper { /* New wrapper for main content */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            flex-grow: 1; /* Allows it to take available space */
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 2.5rem; /* Even more rounded */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+            padding: 3.5rem; /* More padding */
+            max-width: 1000px; /* Wider container */
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0; /* Subtle border */
+        }
+        h1 {
+            color: #1e3a8a;
+            font-size: 4.5rem; /* Larger, more dominant heading */
+            font-weight: 800;
+            margin-bottom: 1.5rem; /* Reduced margin to bring subtitle closer */
+            line-height: 1.1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.08); /* Stronger text shadow */
+        }
+        .subtitle {
+            color: #475569;
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 3rem; /* More space below subtitle */
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .search-container {
+            margin-bottom: 2.5rem;
+            position: relative;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem 1rem 3.5rem; /* Increased left padding for icon */
+            border-radius: 1.5rem;
+            border: 2px solid #cbd5e1;
+            font-size: 1.1rem;
+            color: #334155;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f8fafc;
+        }
+        .search-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+        .grid-container {
+            display: grid;
+            gap: 2.5rem; /* More spacing */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            /* margin-bottom: 3rem; Removed, as footer is now separate */
+        }
+        .calculator-card {
+            background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Card background gradient */
+            border-radius: 1.75rem; /* Rounded corners for cards */
+            padding: 2.25rem; /* More padding */
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.8, 0.25, 1, 0.25), background 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 1px solid #dbeafe; /* Lighter, more subtle border */
+            position: relative;
+            overflow: hidden;
+        }
+        .calculator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top left, rgba(59,130,246,0.1) 0%, transparent 70%); /* Subtle radial gradient effect */
+            border-radius: 1.75rem;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            z-index: 0;
+        }
+        .calculator-card:hover::before {
+            opacity: 1;
+        }
+        .calculator-card:hover {
+            transform: translateY(-12px) scale(1.03); /* More pronounced lift and enlarge */
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25); /* Deeper shadow on hover */
+            background: linear-gradient(to bottom right, #dbeafe, #bfdbfe); /* Brighter gradient on hover */
+        }
+        .calculator-card svg {
+            width: 3.5rem; /* Larger icon size */
+            height: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: #2563eb; /* Blue icon color */
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.1)); /* Subtle shadow for icons */
+            transition: color 0.3s ease-in-out;
+            position: relative;
+            z-index: 1;
+        }
+        .calculator-card:hover svg {
+            color: #1d4ed8; /* Darker blue on hover */
+        }
+        .calculator-card a {
+            color: #1e3a8a; /* Darker blue for link text */
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1.65rem; /* Slightly larger link text */
+            margin-bottom: 0.75rem;
+            display: block;
+            transition: color 0.3s ease-in-out;
+            position: relative;
+            z-index: 1;
+        }
+        .calculator-card a:hover {
+            color: #1a2e7c; /* Even darker blue on hover */
+            text-decoration: none; /* Remove underline on hover for cleaner look */
+        }
+        .calculator-card p {
+            color: #64748b;
+            font-size: 1.05rem; /* Slightly larger description text */
+            line-height: 1.7;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .no-results {
+            color: #ef4444; /* Red text for no results */
+            font-size: 1.2rem;
+            margin-top: 2rem;
+        }
+        .footer {
+            margin-top: auto; /* Pushes footer to the bottom */
+            padding: 1.5rem 2rem; /* Add padding to footer */
+            width: 100%;
+            text-align: center;
+            color: #64748b; /* Darker gray for footer text */
+            font-size: 0.9rem;
+            font-weight: 400;
+            background-color: #e2e8f0; /* Light background for footer */
+            border-top: 1px solid #cbd5e1; /* Subtle border at the top */
+            display: flex;
+            flex-wrap: wrap; /* Allow items to wrap on small screens */
+            justify-content: center;
+            align-items: center;
+            gap: 1rem; /* Space between footer items */
+        }
+        .footer a {
+            color: #2563eb; /* Blue link color in footer */
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease-in-out;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+            color: #1d4ed8;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3.5rem; /* Adjusted for smaller screens */
+            }
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            .container {
+                padding: 2.5rem;
+            }
+            .calculator-card {
+                padding: 1.75rem;
+            }
+            .calculator-card svg {
+                width: 3rem;
+                height: 3rem;
+                margin-bottom: 1rem;
+            }
+            .calculator-card a {
+                font-size: 1.4rem;
+            }
+            .calculator-card p {
+                font-size: 0.95rem;
+            }
+            .search-input {
+                padding: 0.8rem 1.2rem 0.8rem 3rem;
+                font-size: 1rem;
+            }
+            .search-icon {
+                left: 1rem;
+                width: 1.3rem;
+                height: 1.3rem;
+            }
+            .footer {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.75rem; /* Adjusted for even smaller screens */
+                margin-bottom: 1rem;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            .container {
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+            .grid-container {
+                gap: 1.5rem;
+            }
+            .calculator-card {
+                padding: 1.25rem;
+                border-radius: 1.25rem;
+            }
+            .calculator-card svg {
+                width: 2.5rem;
+                height: 2.5rem;
+                margin-bottom: 0.75rem;
+            }
+            .calculator-card a {
+                font-size: 1.2rem;
+            }
+            .calculator-card p {
+                font-size: 0.85rem;
+            }
+            .search-input {
+                padding: 0.7rem 1rem 0.7rem 2.5rem;
+                font-size: 0.9rem;
+            }
+            .search-icon {
+                left: 0.8rem;
+                width: 1.2rem;
+                height: 1.2rem;
+            }
+            .footer {
+                padding: 0.75rem;
+                font-size: 0.75rem;
+                flex-direction: column; /* Stack items vertically on very small screens */
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content-wrapper">
+        <div class="container">
+            <h1>Web Calculator Collection</h1>
+            <p class="subtitle">Explore a variety of practical calculators for your stock estimation, flow, ratio, and mixture needs.</p>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search calculators...">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+
+            <div id="calculatorGrid" class="grid-container">
+                </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <span>&copy; 2025 Ardita Rizki Fauzi. All rights reserved.</span>
+        <a href="https://starch-preparation.netlify.app/about" target="_blank" rel="noopener noreferrer">About Me</a>
+    </footer>
+
+    <script>
+        // Your calculator data
+        const calculators = [
+            {
+                name: "Empty Stock Estimation Calculator",
+                description: "A tool to estimate when stock will run out based on current consumption rates.",
+                href: "estimate stock empty.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>`
+            },
+            {
+                name: "Stock Flow Formula Calculator",
+                description: "Calculate inbound and outbound stock movements to understand your inventory dynamics.",
+                href: "stock flow formula.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>`
+            },
+            {
+                name: "Solid Ratio Calculator",
+                description: "Determine the solid ratio in a mixture or solution.",
+                href: "ratio solid.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sliders">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>`
+            },
+            {
+                name: "Brix Calculator",
+                description: "Measure the sugar content or dissolved solids in a solution.",
+                href: "brix.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-droplet">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0z"></path>
+                        </svg>`
+            },
+            {
+                name: "Water Mixture Calculator",
+                description: "Calculate the correct proportions for mixing water with other ingredients.",
+                href: "kalkulator campuran air.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-droplets">
+                            <path d="M6.8 11.2a6 6 0 0 0 0 11.6"></path>
+                            <path d="M17.2 11.2a6 6 0 0 1 0 11.6"></path>
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0z"></path>
+                        </svg>`
+            },
+            // --- Calculators for Paper Industry ---
+            {
+                name: "Paper Basis Weight/Grammage Calculator",
+                description: "Convert between various paper weight units or calculate total ream weight based on dimensions and grammage.",
+                href: "basisweight.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-ruler">
+                            <path d="M22 17H2a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2zM12 7v10M8 7v10M16 7v10"></path>
+                        </svg>`
+            },
+            {
+                name: "Chemical Consumption Calculator",
+                description: "Estimate the amount of chemicals needed per ton of paper production.",
+                href: "chemical.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-flask">
+                            <path d="M14 22v-4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v4"></path>
+                            <path d="M6 16V6a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v10"></path>
+                        </svg>`
+            },
+            {
+                name: "Paper Machine Efficiency Calculator",
+                description: "Calculate the operational efficiency of a paper machine based on run time, downtime, and target production.",
+                href: "efficiency.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>`
+            },
+            {
+                name: "Cost Per Ton Production Calculator",
+                description: "Estimate the total production cost for each ton of paper produced.",
+                href: "cost.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>`
+            },
+            {
+                name: "Trim/Cutting Optimization Calculator",
+                description: "Help determine the most efficient way to cut large paper rolls into smaller sizes while minimizing trim waste.",
+                href: "trim.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-scissors">
+                            <circle cx="6" cy="6" r="3"></circle>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                            <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                            <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+                        </svg>`
+            },
+            {
+                name: "Paper Moisture Content Calculator",
+                description: "Calculate the moisture content in a paper sample. Important for product quality.",
+                href: "moisture.html",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-humidity">
+                            <path d="M9.5 10.5c-3.14 0-5.5 2.5-5.5 5.5s2.36 5.5 5.5 5.5 5.5-2.5 5.5-5.5-2.36-5.5-5.5-5.5z"></path>
+                            <path d="M12 2v2"></path>
+                            <path d="M12 16h2"></path>
+                            <path d="M12 8h2"></path>
+                            <path d="M12 12h2"></path>
+                        </svg>`
+            },
+{
+    name: "Total Consumption Paper",
+    description: "Calculate the total paper consumption based on production data. Useful for tracking material usage.",
+    href: "consumption.html",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h18v4H3V3zm0 6h18v12H3V9zm5 3h8v2H8v-2z" />
+           </svg>`
+}
+        ];
+
+        const calculatorGrid = document.getElementById('calculatorGrid');
+        const searchInput = document.getElementById('searchInput');
+
+        function renderCalculators(filterText = '') {
+            calculatorGrid.innerHTML = ''; // Clear existing content
+
+            const filteredCalculators = calculators.filter(calc =>
+                calc.name.toLowerCase().includes(filterText.toLowerCase()) ||
+                calc.description.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            if (filteredCalculators.length === 0) {
+                calculatorGrid.innerHTML = '<p class="no-results">No calculators found matching your search.</p>';
+                return;
+            }
+
+            filteredCalculators.forEach(calc => {
+                const card = document.createElement('div');
+                card.classList.add('calculator-card');
+                card.innerHTML = `
+                    ${calc.icon}
+                    <a href="${calc.href}">${calc.name}</a>
+                    <p>${calc.description}</p>
+                `;
+                calculatorGrid.appendChild(card);
+            });
+        }
+
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCalculators();
+        });
+
+        // Add event listener for search input
+        searchInput.addEventListener('keyup', (event) => {
+            renderCalculators(event.target.value);
+        });
+    </script>
+</body>
+</html>
+
