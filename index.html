@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Calculator Collection</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paper Making Formulas – Ardita Rizki Fauzi</title>
+    <link rel="icon" type="image/svg+xml" href="https://www.svgrepo.com/show/354193/paper.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -39,6 +40,18 @@
             overflow: hidden;
             border: 1px solid #e2e8f0; /* Subtle border */
         }
+        .container {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
         h1 {
             color: #1e3a8a;
             font-size: 4.5rem; /* Larger, more dominant heading */
@@ -250,7 +263,7 @@
                 border-radius: 1.5rem;
             }
             body {
-                padding: 1rem;
+                padding: 0.2rem;
             }
             .grid-container {
                 gap: 1.5rem;
@@ -288,30 +301,47 @@
         }
     </style>
 </head>
-<body>
-    <div class="main-content-wrapper">
-        <div class="container">
-            <h1>Web Calculator Collection</h1>
-            <p class="subtitle">Explore a variety of practical calculators for your stock estimation, flow, ratio, and mixture needs.</p>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 text-slate-700 min-h-screen flex flex-col">
 
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search calculators...">
-                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center">
+        <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+        <div class="space-x-6 text-sm">
+            <a href="https://starch-preparation.netlify.app/" class="hover:underline">Home</a>
+            <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline">About</a>
+            <a href="https://wa.me/62895410571547" class="hover:underline">Contact</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex justify-center items-center px-4 py-10">
+        <div class="bg-white shadow-xl rounded-3xl p-10 w-full max-w-5xl text-center">
+            <h1 class="text-5xl font-extrabold text-blue-800 mb-4 drop-shadow-sm">Paper Making Formulas</h1>
+            <p class="text-lg text-slate-600 mb-4 max-w-2xl mx-auto">
+                A curated collection of calculators and formulas used in the paper making process – from stock preparation to cost estimation.
+            </p>
+       
+            <div class="mb-8 relative max-w-md mx-auto">
+                <input type="text" id="searchInput" class="w-full border border-slate-300 rounded-full py-3 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none" placeholder="Search calculators..." />
+                <svg class="w-5 h-5 text-slate-400 absolute left-4 top-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
             </div>
 
-            <div id="calculatorGrid" class="grid-container">
-                </div>
-        </div>
-    </div>
+            <div id="calculatorGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamic Cards Will Be Injected Here -->
+            </div>
 
-    <footer class="footer">
-        <span>&copy; 2025 Ardita Rizki Fauzi. All rights reserved.</span>
+            <div class="mt-10 text-center text-slate-500 italic text-sm">
+                “Accurate calculations ensure smooth production and optimal efficiency.”
+            </div>
+        </div>
+    </main>
+
+      <footer class="footer">
+        <span>&copy; 2025 Ardita Rizki Fauzi – Operator Starch Preparation PM1</span>
+        <span>PT Dayasa Aria Prima, Gresik</span>
         <a href="https://starch-preparation.netlify.app/about" target="_blank" rel="noopener noreferrer">About Me</a>
     </footer>
-
     <script>
         // Your calculator data
         const calculators = [
