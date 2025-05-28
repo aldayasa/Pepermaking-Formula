@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basis Weight Finder Calculator</title>
+    <title>Kalkulator Berat Dasar Kertas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -213,41 +213,51 @@
 </head>
 <body>
     <div class="calculator-container">
-        <h1>Basis Weight Finder Calculator</h1>
+        <h1>Kalkulator Berat Dasar Kertas</h1>
         <p class="description">
-            Basis weight (or grammage) is the weight of paper per unit area, typically expressed in grams per square meter (GSM). It is a key quality parameter indicating the paper's thickness and density. In the paper industry, basis weight is crucial for quality control, production costs, and final product specifications.
+            Berat dasar (atau gramatur) adalah berat kertas per unit area, biasanya dinyatakan dalam gram per meter persegi (GSM). Ini adalah parameter kualitas kunci yang menunjukkan ketebalan dan kepadatan kertas. Dalam industri kertas, berat dasar sangat penting untuk kontrol kualitas, biaya produksi, dan spesifikasi produk akhir.
             <br><br>
-            Use this calculator to determine the basis weight (GSM) of your paper **before size press application**, based on the dry stock flow rate from the headbox, paper width, and machine speed.
+            Gunakan kalkulator ini untuk menentukan berat dasar (GSM) kertas Anda, dengan mempertimbangkan laju aliran stok kering dari headbox, lebar kertas, kecepatan mesin, dan dampak **aplikasi size press (berat lapisan starch) serta kadar air akhir.**
         </p>
 
         <div class="input-grid">
             <div class="input-group">
-                <label for="stockFlow">Stock Flow (L/min):</label>
-                <input type="number" id="stockFlow" class="input-field" placeholder="contoh: 13800" step="0.01">
+                <label for="stockFlow">Stock Flow (L/menit):</label>
+                <input type="number" id="stockFlow" class="input-field" placeholder="contoh: 12359.6" step="0.01" value="12359.6">
             </div>
 
             <div class="input-group">
-                <label for="stockConsistency">Stock Consistency (% dry):</label>
-                <input type="number" id="stockConsistency" class="input-field" placeholder="contoh: 4" step="0.01">
+                <label for="stockConsistency">Drystock Control (%):</label>
+                <input type="number" id="stockConsistency" class="input-field" placeholder="contoh: 3.07" step="0.01" value="3.43"> </div>
+
+            <div class="input-group">
+                <label for="paperWidth">Reel Trim (mm):</label>
+                <input type="number" id="paperWidth" class="input-field" placeholder="contoh: 5077.10" step="0.01" value="5077.10">
             </div>
 
             <div class="input-group">
-                <label for="paperWidth">Paper Width (mm):</label>
-                <input type="number" id="paperWidth" class="input-field" placeholder="contoh: 5500" step="0.01">
+                <label for="speed">Reel Speed (m/menit):</label>
+                <input type="number" id="speed" class="input-field" placeholder="contoh: 751.60" step="0.01" value="751.60">
             </div>
 
             <div class="input-group">
-                <label for="speed">Machine Speed (m/min):</label>
-                <input type="number" id="speed" class="input-field" placeholder="contoh: 820" step="0.01">
+                <label for="coatWeight">Coat Weight (GSM):</label>
+                <input type="number" id="coatWeight" class="input-field" placeholder="contoh: 4.41" step="0.01" value="4.41">
+            </div>
+
+            <div class="input-group">
+                <label for="finalMoisture">Reel Moisture Control (%):</label>
+                <input type="number" id="finalMoisture" class="input-field" placeholder="contoh: 8.86" step="0.01" value="8.86">
             </div>
         </div>
 
-        <button onclick="calculateBasisWeight()" class="button-primary">Calculate Basis Weight (GSM)</button>
+        <button onclick="calculateBasisWeight()" class="button-primary">Hitung Berat Dasar (GSM)</button>
 
         <div id="errorMessage" class="error-message hidden"></div>
 
         <div id="results" class="result-section hidden">
-            <div class="result-item">Basis Weight (GSM): <strong id="calculatedGsm"></strong></div>
+            <div class="result-item">Cond Weight (GSM): <strong id="calculatedDryGsm"></strong></div>
+            <div class="result-item">Reel Basis Weight (GSM): <strong id="calculatedCondGsm"></strong></div>
         </div>
 
         <a href="index.html" class="back-button">
@@ -255,7 +265,7 @@
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
-            Back to Calculators
+            Kembali ke Kalkulator
         </a>
     </div>
 
@@ -265,6 +275,8 @@
             const stockConsistency = parseFloat(document.getElementById('stockConsistency').value); // % dry
             const paperWidth = parseFloat(document.getElementById('paperWidth').value);         // mm
             const speed = parseFloat(document.getElementById('speed').value);                   // m/min
+            const coatWeight = parseFloat(document.getElementById('coatWeight').value);         // GSM (direct addition from starch)
+            const finalMoisture = parseFloat(document.getElementById('finalMoisture').value);   // % of final paper weight
 
             const errorMessage = document.getElementById('errorMessage');
             const resultsDiv = document.getElementById('results');
@@ -274,41 +286,40 @@
             resultsDiv.classList.add('hidden');
 
             // Input validation
-            if (isNaN(stockFlow) || stockFlow <= 0 || isNaN(stockConsistency) || stockConsistency <= 0 || stockConsistency > 100 ||
-                isNaN(paperWidth) || paperWidth <= 0 || isNaN(speed) || speed <= 0) {
-                errorMessage.textContent = 'Please enter valid positive numbers for all fields. Stock Consistency must be between 0-100%.';
+            if (isNaN(stockFlow) || stockFlow <= 0 ||
+                isNaN(stockConsistency) || stockConsistency <= 0 || stockConsistency > 100 ||
+                isNaN(paperWidth) || paperWidth <= 0 ||
+                isNaN(speed) || speed <= 0 ||
+                isNaN(coatWeight) || coatWeight < 0 || // Coat weight can be 0 or positive
+                isNaN(finalMoisture) || finalMoisture < 0 || finalMoisture >= 100) { // Moisture cannot be 100% or more
+                errorMessage.textContent = 'Harap masukkan angka positif yang valid untuk semua kolom. Konsistensi Stok harus antara 0-100%. Berat Lapisan Starch harus non-negatif. Kadar Air Akhir harus antara 0-99.99%.';
                 errorMessage.classList.remove('hidden');
                 return;
             }
 
-            // Derivation:
-            // 1. Convert Stock Flow (L/min) to Dry Mass Flow (g/min)
-            //    Assuming slurry density is approximately 1 kg/L.
-            //    Mass Flow Rate of Total Slurry (kg/min) = Stock Flow (L/min) * 1 kg/L
-            //    Mass Flow Rate of Dry Pulp (kg/min) = Mass Flow Rate of Total Slurry (kg/min) * (Stock Consistency / 100)
-            //    Mass Flow Rate of Dry Pulp (g/min) = Mass Flow Rate of Dry Pulp (kg/min) * 1000 g/kg
+            // 1. Hitung Laju Aliran Massa Kering (Dry Mass Flow) dari headbox (g/menit)
+            // Asumsi densitas bubur kertas (slurry) sekitar 1 kg/L.
+            const dryMassFlow_g_per_min = stockFlow * (stockConsistency / 100) * 1000; // g/menit
 
-            //    Simplified: Dry Mass Flow (g/min) = stockFlow * (stockConsistency / 100) * 1000
+            // 2. Hitung Area Kertas yang Diproduksi per menit (m²/menit)
+            const paperWidth_m = paperWidth / 1000; // Konversi mm ke meter
+            const areaProduced_sqm_per_min = paperWidth_m * speed; // m²/menit
 
-            // 2. Convert Paper Width (mm) to meters (m)
-            //    Paper Width (m) = paperWidth (mm) / 1000
+            // 3. Hitung Berat Dasar Kering Terhitung (GSM) - ini adalah berat serat murni sebelum size press
+            const calculatedDryGsm = dryMassFlow_g_per_min / areaProduced_sqm_per_min;
 
-            // 3. Calculate Area Produced per minute (m²/min)
-            //    Area Produced (m²/min) = Paper Width (m) * Speed (m/min)
+            // 4. Hitung Berat Dasar setelah Penambahan Lapisan Starch (berat kering serat + berat starch)
+            // Berat Lapisan Starch (Coat Weight) ditambahkan langsung dalam GSM
+            const gsmAfterStarch = calculatedDryGsm + coatWeight;
 
-            // 4. Calculate GSM (g/m²)
-            //    GSM = Dry Mass Flow (g/min) / Area Produced (m²/min)
+            // 5. Hitung Berat Dasar Terkondisi (termasuk kadar air akhir)
+            // Jika kadar air akhir adalah 8.86%, berarti berat kering + starch adalah (100 - 8.86)% dari berat terkondisi.
+            // Berat Terkondisi = (Berat setelah starch) / (1 - kadar_air_akhir/100)
+            const calculatedCondGsm = gsmAfterStarch / (1 - finalMoisture / 100);
 
-            // Combining all:
-            // GSM = (stockFlow * (stockConsistency / 100) * 1000) / ((paperWidth / 1000) * speed)
-            // GSM = (stockFlow * stockConsistency * 10) / (paperWidth / 1000 * speed)
-            // GSM = (stockFlow * stockConsistency * 10 * 1000) / (paperWidth * speed)
-            // GSM = (stockFlow * stockConsistency * 10000) / (paperWidth * speed)
-
-            const calculatedGsm = (stockFlow * stockConsistency * 10000) / (paperWidth * speed);
-
-            // Display results
-            document.getElementById('calculatedGsm').textContent = `${calculatedGsm.toFixed(2)} GSM`;
+            // Tampilkan hasil
+            document.getElementById('calculatedDryGsm').textContent = `${calculatedDryGsm.toFixed(2)} GSM`;
+            document.getElementById('calculatedCondGsm').textContent = `${calculatedCondGsm.toFixed(2)} GSM`;
             resultsDiv.classList.remove('hidden');
         }
     </script>
