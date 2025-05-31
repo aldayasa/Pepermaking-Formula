@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalkulator Perbandingan Takaran Bahan</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- FontAwesome -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #e0f2f7 0%, #cce7f5 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .card {
+      max-width: 600px;
+      margin: auto;
+      border-radius: 1rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    }
+    h2 {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      padding: 1.25rem 1rem;
+      border-radius: 1rem 1rem 0 0;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      user-select: none;
+    }
+    .input-name {
+      min-width: 0; /* fix flex shrinking */
+    }
+    .input-amount {
+      max-width: 100px;
+    }
+    .btn-add {
+      max-width: 180px;
+    }
+    .btn-remove {
+      color: #dc3545;
+      border: none;
+      background: transparent;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    .btn-remove:hover {
+      color: #a71d2a;
+    }
+    .modal-content {
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #0d6efd, #4f94fd);
+  color: white;
+  border-bottom: none;
+  align-items: center;
+}
+
+.modal-header .modal-title {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-header .modal-title i {
+  font-size: 1.2rem;
+}
+
+.modal-body {
+  background-color: #f8f9fa;
+  font-size: 1rem;
+  color: #333;
+  padding: 1.5rem;
+}
+
+.modal-body ul {
+  padding-left: 1.2rem;
+  margin-top: 1rem;
+}
+
+.modal-footer {
+  border-top: none;
+  background-color: #f0f0f0;
+  padding: 1rem 1.5rem;
+}
+  </style>
+</head>
+<body>
+
+<div class="card p-4 bg-white">
+  <h2>Kalkulator Perbandingan Takaran Bahan</h2>
+
+  <div class="mb-3">
+    <label for="airAwal" class="form-label fw-semibold">Air Awal (gram atau ml):</label>
+    <input type="number" class="form-control" id="airAwal" placeholder="Masukkan jumlah air awal" min="1" />
+  </div>
+
+  <div id="bahanContainer" class="row g-3 mb-2">
+    <div class="col-12 col-md-6 d-flex gap-2 align-items-center bahan-row">
+      <input
+        type="text"
+        class="form-control input-name"
+        placeholder="Nama bahan 1"
+      />
+      <input
+        type="number"
+        class="form-control input-amount"
+        placeholder="Takaran gram"
+        min="0"
+        step="any"
+      />
+      <button class="btn-remove" title="Hapus bahan" onclick="removeBahan(this)" aria-label="Hapus bahan"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="col-12 col-md-6 d-flex gap-2 align-items-center bahan-row">
+      <input
+        type="text"
+        class="form-control input-name"
+        placeholder="Nama bahan 2"
+      />
+      <input
+        type="number"
+        class="form-control input-amount"
+        placeholder="Takaran gram"
+        min="0"
+        step="any"
+      />
+      <button class="btn-remove" title="Hapus bahan" onclick="removeBahan(this)" aria-label="Hapus bahan"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+
+  <button
+    class="btn btn-success btn-add d-flex align-items-center gap-2 mb-4"
+    onclick="addBahan()"
+    type="button"
+    aria-label="Tambah bahan baru"
+    title="Tambah bahan baru"
+  >
+    <i class="fa-solid fa-plus"></i> Tambah Bahan Baru
+  </button>
+
+  <div class="mb-3">
+    <label for="airBaru" class="form-label fw-semibold">Air Baru (gram atau ml):</label>
+    <input type="number" class="form-control" id="airBaru" placeholder="Masukkan jumlah air baru" min="1" />
+  </div>
+
+  <div class="d-flex gap-2 mb-3">
+    <button class="btn btn-primary flex-grow-1" onclick="hitung()">Hitung Takaran Baru</button>
+    <button class="btn btn-outline-secondary" onclick="resetForm()" title="Reset semua input"><i class="fa-solid fa-rotate"></i></button>
+  </div>
+
+  <!-- Modal Bootstrap untuk hasil -->
+  <div
+    class="modal fade"
+    id="hasilModal"
+    tabindex="-1"
+    aria-labelledby="hasilModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="hasilModalLabel">
+  <i class="fa-solid fa-circle-check"></i> Hasil Perhitungan
+</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Isi hasil muncul di sini -->
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080;">
+  <div id="alertToast" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMessage">
+        <!-- Pesan muncul di sini -->
+      </div>
+      <button type="button" class="btn btn-sm btn-primary me-2 my-auto" id="toastOkBtn">OK</button>
+    </div>
+  </div>
+</div>
+<!-- Bootstrap Bundle JS (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  function addBahan() {
+    const container = document.getElementById('bahanContainer');
+    const count = container.querySelectorAll('.bahan-row').length + 1;
+
+    const colDiv = document.createElement('div');
+    colDiv.className = 'col-12 col-md-6 d-flex gap-2 align-items-center bahan-row';
+
+    colDiv.innerHTML = `
+      <input
+        type="text"
+        class="form-control input-name"
+        placeholder="Nama bahan ${count}"
+      />
+      <input
+        type="number"
+        class="form-control input-amount"
+        placeholder="Takaran gram"
+        min="0"
+        step="any"
+      />
+      <button class="btn-remove" title="Hapus bahan" onclick="removeBahan(this)" aria-label="Hapus bahan">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    `;
+
+    container.appendChild(colDiv);
+  }
+
+  function removeBahan(btn) {
+    const container = document.getElementById('bahanContainer');
+    const rows = container.querySelectorAll('.bahan-row');
+    if (rows.length <= 1) {
+      alert('Minimal harus ada 1 bahan.');
+      return;
+    }
+    btn.closest('.bahan-row').remove();
+  }
+
+  function resetForm() {
+    // Reset semua input bahan dan air
+    document.getElementById('airAwal').value = '';
+    document.getElementById('airBaru').value = '';
+
+    const container = document.getElementById('bahanContainer');
+    container.innerHTML = '';
+
+    // Tambahkan 2 bahan kosong awal lagi
+    for(let i=1; i<=2; i++) {
+      const colDiv = document.createElement('div');
+      colDiv.className = 'col-12 col-md-6 d-flex gap-2 align-items-center bahan-row';
+      colDiv.innerHTML = `
+        <input
+          type="text"
+          class="form-control input-name"
+          placeholder="Nama bahan ${i}"
+        />
+        <input
+          type="number"
+          class="form-control input-amount"
+          placeholder="Takaran gram"
+          min="0"
+          step="any"
+        />
+        <button class="btn-remove" title="Hapus bahan" onclick="removeBahan(this)" aria-label="Hapus bahan">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      `;
+      container.appendChild(colDiv);
+    }
+
+    // Clear modal body if visible
+    document.getElementById('modalBody').innerHTML = '';
+  }
+
+  function hitung() {
+    const airAwal = parseFloat(document.getElementById('airAwal').value);
+    const airBaru = parseFloat(document.getElementById('airBaru').value);
+
+    if (isNaN(airAwal) || airAwal <= 0) {
+      alert('Input Air Awal tidak valid! Harap isi dengan angka lebih besar dari 0.');
+      return;
+    }
+    if (isNaN(airBaru) || airBaru <= 0) {
+      alert('Input Air Baru tidak valid! Harap isi dengan angka lebih besar dari 0.');
+      return;
+    }
+
+    const container = document.getElementById('bahanContainer');
+    const rows = container.querySelectorAll('.bahan-row');
+
+    let bahanArr = [];
+    for (const row of rows) {
+      const name = row.querySelector('.input-name').value.trim();
+      const amountStr = row.querySelector('.input-amount').value;
+      const amount = parseFloat(amountStr);
+
+      if (!name) {
+        alert('Nama bahan tidak boleh kosong.');
+        return;
+      }
+      if (isNaN(amount) || amount < 0) {
+        alert(`Takaran bahan "${name}" harus angka positif atau nol.`);
+        return;
+      }
+      bahanArr.push({ name, amount });
+    }
+
+    const ratio = airBaru / airAwal;
+    let output = `<p>Perbandingan takaran dari <strong>${airAwal}</strong> ke <strong>${airBaru}</strong> (ratio: ${ratio.toFixed(2)}):</p>`;
+    output += '<ul>';
+    bahanArr.forEach((bahan) => {
+      const takaranBaru = (bahan.amount * ratio).toFixed(2);
+      output += `<li><strong>${bahan.name}</strong>: ${takaranBaru} gram</li>`;
+    });
+    output += '</ul>';
+
+    // Tampilkan di modal
+    document.getElementById('modalBody').innerHTML = output;
+
+    const hasilModal = new bootstrap.Modal(document.getElementById('hasilModal'));
+    hasilModal.show();
+  }
+  // Inisialisasi Toast Bootstrap
+const toastEl = document.getElementById('alertToast');
+const toast = new bootstrap.Toast(toastEl);
+
+// Fungsi untuk menampilkan alert dengan Toast popup
+function showAlert(message) {
+  document.getElementById('toastMessage').innerText = message;
+  toast.show();
+}
+
+// Tombol OK di Toast untuk sembunyikan Toast
+document.getElementById('toastOkBtn').addEventListener('click', () => {
+  toast.hide();
+});
+
+// Contoh fungsi hitung, ganti alert jadi showAlert
+function hitung() {
+  const airAwal = parseFloat(document.getElementById('airAwal').value);
+  const airBaru = parseFloat(document.getElementById('airBaru').value);
+
+  if (isNaN(airAwal) || airAwal <= 0) {
+    showAlert('Input Air Awal tidak valid! Harap isi dengan angka lebih besar dari 0.');
+    return;
+  }
+  if (isNaN(airBaru) || airBaru <= 0) {
+    showAlert('Input Air Baru tidak valid! Harap isi dengan angka lebih besar dari 0.');
+    return;
+  }
+
+  const container = document.getElementById('bahanContainer');
+  const rows = container.querySelectorAll('.bahan-row');
+
+  let bahanArr = [];
+  for (const row of rows) {
+    const name = row.querySelector('.input-name').value.trim();
+    const amountStr = row.querySelector('.input-amount').value;
+    const amount = parseFloat(amountStr);
+
+    if (!name) {
+      showAlert('Nama bahan tidak boleh kosong.');
+      return;
+    }
+    if (isNaN(amount) || amount < 0) {
+      showAlert(`Takaran bahan "${name}" harus angka positif atau nol.`);
+      return;
+    }
+    bahanArr.push({ name, amount });
+  }
+
+  const ratio = airBaru / airAwal;
+  let output = `<p>Perbandingan takaran dari <strong>${airAwal}</strong> ke <strong>${airBaru}</strong> (ratio: ${ratio.toFixed(2)}):</p>`;
+  output += '<ul>';
+  bahanArr.forEach((bahan) => {
+    const takaranBaru = (bahan.amount * ratio).toFixed(2);
+    output += `<li><strong>${bahan.name}</strong>: ${takaranBaru} gram</li>`;
+  });
+  output += '</ul>';
+
+  // Tampilkan di modal hasil (asumsikan modal sudah ada)
+  document.getElementById('modalBody').innerHTML = output;
+
+  const hasilModal = new bootstrap.Modal(document.getElementById('hasilModal'));
+  hasilModal.show();
+}
+</script>
+
+</body>
+</html>

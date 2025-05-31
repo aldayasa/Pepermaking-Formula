@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wet Film Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
+  <div class="container bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md mx-auto transform transition-all duration-300 hover:scale-[1.01]">
+    <h2 class="text-3xl font-extrabold text-center mb-8 text-gray-800 tracking-tight">
+      Wet Film Calculator (WF)
+    </h2>
+
+    <div class="mb-4">
+      <label for="volume" class="block text-gray-700 text-sm font-semibold mb-2">
+        Volume Collected (ml):
+      </label>
+      <input
+        type="number"
+        id="volume"
+        step="any"
+        required
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+        placeholder="e.g., 100"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label for="time" class="block text-gray-700 text-sm font-semibold mb-2">
+        Time (s):
+      </label>
+      <input
+        type="number"
+        id="time"
+        step="any"
+        required
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+        placeholder="e.g., 10"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label for="ts" class="block text-gray-700 text-sm font-semibold mb-2">
+        Total Solid (%):
+      </label>
+      <input
+        type="number"
+        id="ts"
+        step="any"
+        required
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+        placeholder="e.g., 15"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label for="v" class="block text-gray-700 text-sm font-semibold mb-2">
+        Speed (V) in m/min:
+      </label>
+      <input
+        type="number"
+        id="v"
+        step="any"
+        required
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+        placeholder="e.g., 820"
+      />
+    </div>
+
+    <div class="mb-6">
+      <label for="b" class="block text-gray-700 text-sm font-semibold mb-2">
+        Width Sample (B) in cm:
+      </label>
+      <input
+        type="number"
+        id="b"
+        step="any"
+        value="5"
+        required
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+        placeholder="e.g., 5"
+      />
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4">
+      <button
+        onclick="calculateWF()"
+        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        Calculate Wet Film
+      </button>
+      <button
+        onclick="resetForm()"
+        class="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50"
+      >
+        Reset
+      </button>
+    </div>
+
+    <div id="errorModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+      <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+        <h3 class="text-xl font-bold text-red-600 mb-4">Input Error!</h3>
+        <p id="errorMessage" class="text-gray-700 mb-6"></p>
+        <button
+          onclick="closeErrorModal()"
+          class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <div id="resultModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+      <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+        <div class="flex justify-center mb-4">
+          <svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-green-700 mb-4">Calculation Results</h3>
+        <div id="resultContent" class="text-gray-700 text-lg mb-6 leading-relaxed">
+          </div>
+        <button
+          onclick="closeResultModal()"
+          class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * Displays an error message in a modal.
+     * @param {string} message - The error message to display.
+     */
+    function showErrorModal(message) {
+      document.getElementById("errorMessage").innerText = message;
+      document.getElementById("errorModal").classList.remove("hidden");
+    }
+
+    /**
+     * Hides the error message modal.
+     */
+    function closeErrorModal() {
+      document.getElementById("errorModal").classList.add("hidden");
+    }
+
+    /**
+     * Displays the calculation results in a modal.
+     * @param {number} wf - Wet Film Thickness.
+     * @param {number} q - Debit.
+     * @param {number} density - Density.
+     */
+    function showResultModal(wf, q, density) {
+      document.getElementById("resultContent").innerHTML = `
+        <p>Wet Film Thickness (WF) = <span class="font-bold text-green-900">${wf.toFixed(2)} g/m²</span></p>
+        <p>Debit (Q) = <span class="font-bold text-green-900">${q.toFixed(0)} ml/s</span></p>
+        <p>Density = <span class="font-bold text-green-900">${density.toFixed(3)} g/cm³</span></p>
+      `;
+      document.getElementById("resultModal").classList.remove("hidden");
+    }
+
+    /**
+     * Hides the result modal.
+     */
+    function closeResultModal() {
+      document.getElementById("resultModal").classList.add("hidden");
+    }
+
+    /**
+     * Resets all input fields and clears any displayed results or error messages.
+     */
+    function resetForm() {
+      document.getElementById("volume").value = "";
+      document.getElementById("time").value = "";
+      document.getElementById("ts").value = "";
+      document.getElementById("v").value = "";
+      document.getElementById("b").value = "5"; // Reset to default value
+      // Ensure any open modals are closed
+      closeErrorModal();
+      closeResultModal();
+    }
+
+    /**
+     * Calculates the Wet Film Thickness, Debit, and Density based on user inputs.
+     * Displays the results or an error message.
+     */
+    function calculateWF() {
+      const volume = parseFloat(document.getElementById("volume").value); // ml
+      const time = parseFloat(document.getElementById("time").value); // s
+      const ts = parseFloat(document.getElementById("ts").value); // % Total Solid
+      const v_m_min = parseFloat(document.getElementById("v").value); // m/min Speed
+      const b = parseFloat(document.getElementById("b").value); // cm Width Sample
+
+      // Validate inputs
+      if (isNaN(volume) || isNaN(time) || isNaN(ts) || isNaN(v_m_min) || isNaN(b) ||
+          time <= 0 || v_m_min <= 0 || b <= 0) {
+        showErrorModal("Isenana angka positif sing bener kabeh, yo. Wektu, Kacepetan, lan Ambané ojo nol utawa negatif."
+);
+        return;
+      }
+
+      // Calculate Q (Debit) in ml/s
+      const q = volume / time;
+
+      // Calculate density using the provided formula: 100 / (100 - TS + (TS / 1.65))
+      const density = 100 / (100 - ts + (ts / 1.65));
+
+      // Convert speed from m/min to cm/s
+      const v_cm_s = (v_m_min * 100) / 60;
+
+      // Calculate Wet Film Thickness (WF) in g/cm²
+      const wf_g_per_cm2 = (q * density) / (v_cm_s * b);
+      // Convert g/cm² to g/m² (1 m² = 10000 cm²)
+      const wf_g_per_m2 = wf_g_per_cm2 * 10000;
+
+      // Display results in the new modal
+      showResultModal(wf_g_per_m2, q, density);
+    }
+  </script>
+</body>
+</html>
+
