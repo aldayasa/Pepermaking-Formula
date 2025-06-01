@@ -10,12 +10,9 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
-            box-sizing: border-box;
+            display: flex; /* Use flexbox for overall layout */
+            flex-direction: column; /* Stack nav, main, footer vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
             color: #334155;
             overflow-x: hidden;
         }
@@ -221,60 +218,84 @@
     </style>
 </head>
 <body>
-    <div class="calculator-container">
-        <h1>Paper Machine Efficiency Calculator</h1>
-        <p class="description">
-            This calculator helps you assess the operational efficiency of your paper machine. It calculates the actual operating time, theoretical maximum production, and the overall operational efficiency based on your input parameters, including downtime specified using convenient time pickers.
-        </p>
+    <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+        <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+        <div class="space-x-6 text-sm">
+            <a href="https://starch-preparation.netlify.app/" class="hover:underline">Home</a>
+            <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline">About</a>
+            <a href="https://wa.me/62895410571547" class="hover:underline">Contact</a>
+        </div>
+    </nav>
 
-        <div class="input-grid">
-            <div class="input-group">
-                <label for="totalScheduledOperatingHours">Total Scheduled Operating Hours:</label>
-                <input type="number" id="totalScheduledOperatingHours" class="input-field" placeholder="contoh: 24 (hours per day)" step="0.01">
-            </div>
+    <main class="flex-grow flex justify-center items-center px-4 py-10 mt-20"> <div class="calculator-container">
+            <h1>Paper Machine Efficiency Calculator</h1>
+            <p class="description">
+                This calculator helps you assess the operational efficiency of your paper machine. It calculates the actual operating time, theoretical maximum production, and the overall operational efficiency based on your input parameters, including downtime specified using convenient time pickers.
+            </p>
 
-            <div class="input-group">
-                <label>Unplanned Downtime:</label>
-                <div class="time-input-group">
-                    <input type="time" id="downtimeStart" class="input-field" value="00:00">
-                    <span class="flex items-center text-gray-500">-</span>
-                    <input type="time" id="downtimeEnd" class="input-field" value="00:00">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="totalScheduledOperatingHours">Total Scheduled Operating Hours:</label>
+                    <input type="number" id="totalScheduledOperatingHours" class="input-field" placeholder="contoh: 24 (hours per day)" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label>Unplanned Downtime:</label>
+                    <div class="time-input-group">
+                        <input type="time" id="downtimeStart" class="input-field" value="00:00">
+                        <span class="flex items-center text-gray-500">-</span>
+                        <input type="time" id="downtimeEnd" class="input-field" value="00:00">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="actualProductionTons">Actual Paper Production (tons):</label>
+                    <input type="number" id="actualProductionTons" class="input-field" placeholder="contoh: 200" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label for="standardProductionRateTonsPerHour">Standard Production Rate (tons/hour):</label>
+                    <input type="number" id="standardProductionRateTonsPerHour" class="input-field" placeholder="contoh: 30 (tons per operating hour)" step="0.01">
                 </div>
             </div>
 
-            <div class="input-group">
-                <label for="actualProductionTons">Actual Paper Production (tons):</label>
-                <input type="number" id="actualProductionTons" class="input-field" placeholder="contoh: 200" step="0.01">
+            <button onclick="calculateEfficiency()" class="button-primary">Calculate Efficiency</button>
+
+            <div id="errorMessage" class="error-message hidden"></div>
+
+            <div id="results" class="result-section hidden">
+                <div class="result-item">Actual Operating Hours: <strong id="actualOperatingHours"></strong></div>
+                <div class="result-item">Calculated Downtime: <strong id="calculatedDowntime"></strong></div>
+                <div class="result-item">Theoretical Production Possible: <strong id="theoreticalProduction"></strong></div>
+                <div class="result-item">Operational Efficiency: <strong id="operationalEfficiency"></strong></div>
+                <div class="result-item">Lost Production: <strong id="lostProduction"></strong></div>
             </div>
 
-            <div class="input-group">
-                <label for="standardProductionRateTonsPerHour">Standard Production Rate (tons/hour):</label>
-                <input type="number" id="standardProductionRateTonsPerHour" class="input-field" placeholder="contoh: 30 (tons per operating hour)" step="0.01">
+            <a href="https://starch-preparation.netlify.app/" class="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Calculators
+            </a>
+
+            <div class="mt-10 text-center text-slate-500 italic text-sm">
+                “Accurate calculations ensure smooth production and optimal efficiency.”
             </div>
+
+            <footer class="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p class="mb-1">&copy; 2025 Paper Machine Efficiency Calculator. All rights reserved.</p>
+                <p>Developed by <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> for <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+            </footer>
         </div>
-
-        <button onclick="calculateEfficiency()" class="button-primary">Calculate Efficiency</button>
-
-        <div id="errorMessage" class="error-message hidden"></div>
-
-        <div id="results" class="result-section hidden">
-            <div class="result-item">Actual Operating Hours: <strong id="actualOperatingHours"></strong></div>
-            <div class="result-item">Calculated Downtime: <strong id="calculatedDowntime"></strong></div>
-            <div class="result-item">Theoretical Production Possible: <strong id="theoreticalProduction"></strong></div>
-            <div class="result-item">Operational Efficiency: <strong id="operationalEfficiency"></strong></div>
-            <div class="result-item">Lost Production: <strong id="lostProduction"></strong></div>
-        </div>
-
-        <a href="index.html" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Calculators
-        </a>
-    </div>
+    </main>
 
     <script>
+        /**
+         * Parses a time string (HH:MM) into total minutes from midnight.
+         * @param {string} timeStr - The time string to parse.
+         * @returns {number|null} Total minutes from midnight, or null if invalid format.
+         */
         function parseTime(timeStr) {
             const parts = timeStr.split(':');
             if (parts.length === 2) {
@@ -287,21 +308,29 @@
             return null; // Invalid format
         }
 
+        /**
+         * Calculates the efficiency metrics for a paper machine.
+         * This includes actual operating hours, calculated downtime, theoretical production,
+         * operational efficiency, and lost production.
+         * Displays the results or an error message if inputs are invalid.
+         */
         function calculateEfficiency() {
+            // Get input values from the HTML elements
             const totalScheduledOperatingHours = parseFloat(document.getElementById('totalScheduledOperatingHours').value);
             const downtimeStartStr = document.getElementById('downtimeStart').value;
             const downtimeEndStr = document.getElementById('downtimeEnd').value;
             const actualProductionTons = parseFloat(document.getElementById('actualProductionTons').value);
             const standardProductionRateTonsPerHour = parseFloat(document.getElementById('standardProductionRateTonsPerHour').value);
 
+            // Get references to the error message and results display elements
             const errorMessage = document.getElementById('errorMessage');
             const resultsDiv = document.getElementById('results');
 
-            // Reset error message and hide results
+            // Reset error message and hide results before new calculation
             errorMessage.classList.add('hidden');
             resultsDiv.classList.add('hidden');
 
-            // Input validation for numbers
+            // Input validation for numeric fields
             if (isNaN(totalScheduledOperatingHours) || totalScheduledOperatingHours <= 0 ||
                 isNaN(actualProductionTons) || actualProductionTons < 0 ||
                 isNaN(standardProductionRateTonsPerHour) || standardProductionRateTonsPerHour <= 0) {
@@ -310,36 +339,38 @@
                 return;
             }
 
-            // Parse downtime times
+            // Parse downtime times from HH:MM format to total minutes
             const startMinutes = parseTime(downtimeStartStr);
             const endMinutes = parseTime(downtimeEndStr);
 
             let unplannedDowntimeHours = 0;
 
-            // Only calculate downtime if both are provided and valid
+            // Handle downtime calculation based on start and end times
             if (downtimeStartStr && downtimeEndStr && startMinutes !== null && endMinutes !== null) {
                 if (endMinutes < startMinutes) {
-                    // Handle overnight downtime, contoh: 23:00 to 01:00
-                    // Assume it's within a 24-hour cycle.
+                    // Scenario: Downtime spans across midnight (e.g., 23:00 to 01:00)
+                    // Calculate duration from start to midnight, then from midnight to end.
                     unplannedDowntimeHours = (24 * 60 - startMinutes + endMinutes) / 60;
                 } else {
+                    // Scenario: Downtime within the same day
                     unplannedDowntimeHours = (endMinutes - startMinutes) / 60;
                 }
 
-                if (unplannedDowntimeHours < 0) { // Safeguard, though logic should prevent this
+                // Safeguard against negative downtime (though logic should prevent this with proper time handling)
+                if (unplannedDowntimeHours < 0) {
                     errorMessage.textContent = 'Downtime calculation resulted in a negative value. Please check times.';
                     errorMessage.classList.remove('hidden');
                     return;
                 }
             } else if ((downtimeStartStr && !downtimeEndStr) || (!downtimeStartStr && downtimeEndStr)) {
+                 // Error if only one time is provided for downtime
                  errorMessage.textContent = 'Please enter both start and end times for downtime, or leave both empty.';
                  errorMessage.classList.remove('hidden');
                  return;
             } else if (!downtimeStartStr && !downtimeEndStr) {
-                // If both are empty, assume 0 downtime
+                // If both downtime fields are empty, assume zero unplanned downtime
                 unplannedDowntimeHours = 0;
             }
-
 
             // Validate calculated downtime against total scheduled hours
             if (unplannedDowntimeHours >= totalScheduledOperatingHours) {
@@ -348,29 +379,28 @@
                 return;
             }
 
-
-            // 1. Actual Operating Hours
+            // 1. Calculate Actual Operating Hours
             const actualOperatingHours = totalScheduledOperatingHours - unplannedDowntimeHours;
 
-            // 2. Theoretical Production Possible
+            // 2. Calculate Theoretical Production Possible
             const theoreticalProductionPossible = actualOperatingHours * standardProductionRateTonsPerHour;
 
-            // 3. Operational Efficiency (%)
+            // 3. Calculate Operational Efficiency (%)
             let operationalEfficiency = 0;
             if (theoreticalProductionPossible > 0) {
                 operationalEfficiency = (actualProductionTons / theoreticalProductionPossible) * 100;
             }
 
-            // 4. Lost Production (tons)
-            const lostProduction = Math.max(0, theoreticalProductionPossible - actualProductionTons);
+            // 4. Calculate Lost Production (tons)
+            const lostProduction = Math.max(0, theoreticalProductionPossible - actualProductionTons); // Ensure lost production is not negative
 
-            // Display results
+            // Display the calculated results in the respective HTML elements
             document.getElementById('actualOperatingHours').textContent = `${actualOperatingHours.toFixed(2)} hours`;
             document.getElementById('calculatedDowntime').textContent = `${unplannedDowntimeHours.toFixed(2)} hours`;
             document.getElementById('theoreticalProduction').textContent = `${theoreticalProductionPossible.toFixed(2)} tons`;
             document.getElementById('operationalEfficiency').textContent = `${operationalEfficiency.toFixed(2)}%`;
             document.getElementById('lostProduction').textContent = `${lostProduction.toFixed(2)} tons`;
-            resultsDiv.classList.remove('hidden');
+            resultsDiv.classList.remove('hidden'); // Show the results section
         }
     </script>
 </body>

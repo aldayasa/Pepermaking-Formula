@@ -10,14 +10,25 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
-            box-sizing: border-box;
+            display: flex; /* Use flexbox for overall layout */
+            flex-direction: column; /* Stack nav, main, footer vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
             color: #334155;
             overflow-x: hidden;
+        }
+        /* Ensure main content pushes footer down */
+        main {
+            flex-grow: 1; /* Allows main to take up available space */
+            display: flex; /* For centering content within main */
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem; /* Padding for main content */
+            margin-top: 64px; /* Space for fixed nav (adjust if nav height changes) */
+        }
+        @media (min-width: 640px) { /* Adjust margin-top for larger screens if nav height changes */
+            main {
+                margin-top: 72px; /* Example adjustment for larger nav on desktop */
+            }
         }
         .calculator-container {
             background-color: #ffffff;
@@ -212,54 +223,80 @@
     </style>
 </head>
 <body>
-    <div class="calculator-container">
-        <h1>Paper Moisture Content Calculator</h1>
-        <p class="description">
-            This calculator determines the moisture content of a paper sample. Accurate moisture content is crucial for paper quality, printability, and overall performance.
-        </p>
+    <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+        <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+        <div class="space-x-6 text-sm">
+            <a href="https://starch-preparation.netlify.app/" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Home</a>
+            <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">About</a>
+            <a href="https://wa.me/62895410571547" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
+        </div>
+    </nav>
 
-        <div class="input-grid">
-            <div class="input-group">
-                <label for="wetSampleWeight">Wet Sample Weight (grams):</label>
-                <input type="number" id="wetSampleWeight" class="input-field" placeholder="contoh: 128" step="0.001">
+    <main>
+        <div class="calculator-container">
+            <h1>Paper Moisture Content Calculator</h1>
+            <p class="description">
+                This calculator determines the moisture content of a paper sample. Accurate moisture content is crucial for paper quality, printability, and overall performance.
+            </p>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="wetSampleWeight">Wet Sample Weight (grams):</label>
+                    <input type="number" id="wetSampleWeight" class="input-field" placeholder="contoh: 128" step="0.001">
+                </div>
+
+                <div class="input-group">
+                    <label for="drySampleWeight">Dry Sample Weight (grams):</label>
+                    <input type="number" id="drySampleWeight" class="input-field" placeholder="contoh: 118" step="0.001">
+                </div>
             </div>
 
-            <div class="input-group">
-                <label for="drySampleWeight">Dry Sample Weight (grams):</label>
-                <input type="number" id="drySampleWeight" class="input-field" placeholder="contoh: 118" step="0.001">
+            <button onclick="calculateMoistureContent()" class="button-primary">Calculate Moisture Content</button>
+
+            <div id="errorMessage" class="error-message hidden"></div>
+
+            <div id="results" class="result-section hidden">
+                <div class="result-item">Moisture Content: <strong id="moistureContent"></strong></div>
             </div>
+
+            <a href="https://starch-preparation.netlify.app/" class="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Calculators
+            </a>
+
+            <div class="mt-10 text-center text-slate-500 italic text-sm">
+                “Accurate calculations ensure smooth production and optimal efficiency.”
+            </div>
+
+            <footer class="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p class="mb-1">&copy; 2025 Paper Moisture Content Calculator. All rights reserved.</p>
+                <p>Developed by <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> for <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+            </footer>
         </div>
-
-        <button onclick="calculateMoistureContent()" class="button-primary">Calculate Moisture Content</button>
-
-        <div id="errorMessage" class="error-message hidden"></div>
-
-        <div id="results" class="result-section hidden">
-            <div class="result-item">Moisture Content: <strong id="moistureContent"></strong></div>
-        </div>
-
-        <a href="index.html" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Calculators
-        </a>
-    </div>
+    </main>
 
     <script>
+        /**
+         * Calculates the moisture content of a paper sample based on wet and dry weights.
+         * Displays the result or an error message if inputs are invalid.
+         */
         function calculateMoistureContent() {
+            // Get input values from the HTML elements
             const wetSampleWeight = parseFloat(document.getElementById('wetSampleWeight').value);
             const drySampleWeight = parseFloat(document.getElementById('drySampleWeight').value);
 
+            // Get references to the error message and results display elements
             const errorMessage = document.getElementById('errorMessage');
             const resultsDiv = document.getElementById('results');
 
-            // Reset error message and hide results
+            // Reset error message and hide results before new calculation
             errorMessage.classList.add('hidden');
             resultsDiv.classList.add('hidden');
 
-            // Input validation
+            // Input validation: Check if inputs are valid positive numbers
             if (isNaN(wetSampleWeight) || wetSampleWeight <= 0 ||
                 isNaN(drySampleWeight) || drySampleWeight <= 0) {
                 errorMessage.textContent = 'Please enter valid positive numbers for both sample weights.';
@@ -267,6 +304,7 @@
                 return;
             }
 
+            // Validate that dry weight is less than wet weight
             if (drySampleWeight >= wetSampleWeight) {
                 errorMessage.textContent = 'Dry sample weight must be less than wet sample weight.';
                 errorMessage.classList.remove('hidden');
@@ -276,9 +314,9 @@
             // Formula: Moisture Content (%) = ((Wet Weight - Dry Weight) / Wet Weight) * 100
             const moistureContent = ((wetSampleWeight - drySampleWeight) / wetSampleWeight) * 100;
 
-            // Display results
+            // Display the calculated result in the respective HTML element
             document.getElementById('moistureContent').textContent = `${moistureContent.toFixed(2)}%`;
-            resultsDiv.classList.remove('hidden');
+            resultsDiv.classList.remove('hidden'); // Show the results section
         }
     </script>
 </body>

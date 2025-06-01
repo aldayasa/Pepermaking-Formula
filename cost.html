@@ -10,12 +10,9 @@
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 2rem;
-      box-sizing: border-box; /* Ensure padding is included in element's total width and height */
+      display: flex; /* Use flexbox for overall layout */
+      flex-direction: column; /* Stack nav, main, footer vertically */
+      min-height: 100vh; /* Ensure body takes full viewport height */
       color: #334155;
       overflow-x: hidden; /* Prevent horizontal scroll */
     }
@@ -196,75 +193,100 @@
   </style>
 </head>
 <body>
-  <div class="calculator-container">
-    <h1>Cost Per Ton Production</h1>
-    <p class="description">
-      Estimasi biaya produksi per kg dan per ton untuk kertas medium board (2025) dengan mesin 31 ton/jam di Jawa Timur.
-      <br>
-      <span class="text-sm text-gray-500">Catatan: Nilai *placeholder* adalah estimasi ilustratif. Harap ganti dengan data aktual perusahaan Anda untuk hasil yang akurat.</span>
-    </p>
-
-    <div class="input-grid">
-      <div class="input-group">
-        <label for="rawMaterialCost">Raw Material (Rp/kg):</label>
-        <input type="number" id="rawMaterialCost" value="2550" placeholder="e.g., 2550" />
-      </div>
-      <div class="input-group">
-        <label for="starchCost">Starch & Chemical (Rp/kg):</label>
-        <input type="number" id="starchCost" value="300" placeholder="e.g., 300" />
-      </div>
-      <div class="input-group">
-        <label for="electricityCost">Electricity & Steam (Rp/kg):</label>
-        <input type="number" id="electricityCost" value="500" placeholder="e.g., 500" />
-      </div>
-      <div class="input-group">
-        <label for="laborCost">Labor (Rp/kg):</label>
-        <input type="number" id="laborCost" value="200" placeholder="e.g., 200" />
-      </div>
-      <div class="input-group">
-        <label for="overheadCost">Overhead (Rp/kg):</label>
-        <input type="number" id="overheadCost" value="300" placeholder="e.g., 300" />
-      </div>
-      <div class="input-group">
-        <label for="waterCost">Water & Waste Treatment (Rp/kg):</label>
-        <input type="number" id="waterCost" value="100" placeholder="e.g., 100" />
-      </div>
-
-      <div class="input-group">
-        <label for="productionRate">Production Rate (ton/hour):</label>
-        <input type="number" id="productionRate" value="31" placeholder="e.g., 31" />
-      </div>
-      <div class="input-group">
-        <label for="operatingHours">Operating Hours/Day:</label>
-        <input type="number" id="operatingHours" value="24" placeholder="e.g., 24" />
-      </div>
-      <div class="input-group">
-        <label for="operatingDays">Operating Days:</label>
-        <input type="number" id="operatingDays" value="30" placeholder="e.g., 30" />
-      </div>
+  <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+    <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+    <div class="space-x-6 text-sm">
+        <a href="https://starch-preparation.netlify.app/" class="hover:underline">Home</a>
+        <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline">About</a>
+        <a href="https://wa.me/62895410571547" class="hover:underline">Contact</a>
     </div>
+  </nav>
 
-    <button onclick="calculateCost()" class="button-primary">Calculate</button>
+  <main class="flex-grow flex justify-center items-center px-4 py-10 mt-20"> <div class="calculator-container">
+      <h1>Cost Per Ton Production</h1>
+      <p class="description">
+        Estimasi biaya produksi per kg dan per ton untuk kertas medium board (2025) dengan mesin 31 ton/jam di Jawa Timur.
+        <br>
+        <span class="text-sm text-gray-500">Catatan: Nilai *placeholder* adalah estimasi ilustratif. Harap ganti dengan data aktual perusahaan Anda untuk hasil yang akurat.</span>
+      </p>
 
-    <div id="errorMessage" class="error-message hidden"></div>
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="rawMaterialCost">Raw Material (Rp/kg):</label>
+          <input type="number" id="rawMaterialCost" value="2550" placeholder="e.g., 2550" />
+        </div>
+        <div class="input-group">
+          <label for="starchCost">Starch & Chemical (Rp/kg):</label>
+          <input type="number" id="starchCost" value="300" placeholder="e.g., 300" />
+        </div>
+        <div class="input-group">
+          <label for="electricityCost">Electricity & Steam (Rp/kg):</label>
+          <input type="number" id="electricityCost" value="500" placeholder="e.g., 500" />
+        </div>
+        <div class="input-group">
+          <label for="laborCost">Labor (Rp/kg):</label>
+          <input type="number" id="laborCost" value="200" placeholder="e.g., 200" />
+        </div>
+        <div class="input-group">
+          <label for="overheadCost">Overhead (Rp/kg):</label>
+          <input type="number" id="overheadCost" value="300" placeholder="e.g., 300" />
+        </div>
+        <div class="input-group">
+          <label for="waterCost">Water & Waste Treatment (Rp/kg):</label>
+          <input type="number" id="waterCost" value="100" placeholder="e.g., 100" />
+        </div>
 
-    <div id="results" class="result-section hidden">
-      <div class="result-item"><strong>Total Production:</strong> <span id="totalProductionKg"></span> kg</div>
-      <div class="result-item"><strong>Total Production Cost:</strong> <span id="totalCost"></span></div>
-      <div class="result-item"><strong>Cost per kg:</strong> <span id="costPerKg"></span></div>
-      <div class="result-item"><strong>Cost per ton:</strong> <span id="costPerTon"></span></div>
+        <div class="input-group">
+          <label for="productionRate">Production Rate (ton/hour):</label>
+          <input type="number" id="productionRate" value="31" placeholder="e.g., 31" />
+        </div>
+        <div class="input-group">
+          <label for="operatingHours">Operating Hours/Day:</label>
+          <input type="number" id="operatingHours" value="24" placeholder="e.g., 24" />
+        </div>
+        <div class="input-group">
+          <label for="operatingDays">Operating Days:</label>
+          <input type="number" id="operatingDays" value="30" placeholder="e.g., 30" />
+        </div>
+      </div>
+
+      <button onclick="calculateCost()" class="button-primary">Calculate</button>
+
+      <div id="errorMessage" class="error-message hidden"></div>
+
+      <div id="results" class="result-section hidden">
+        <div class="result-item"><strong>Total Production:</strong> <span id="totalProductionKg"></span> kg</div>
+        <div class="result-item"><strong>Total Production Cost:</strong> <span id="totalCost"></span></div>
+        <div class="result-item"><strong>Cost per kg:</strong> <span id="costPerKg"></span></div>
+        <div class="result-item"><strong>Cost per ton:</strong> <span id="costPerTon"></span></div>
+      </div>
+
+      <a href="https://starch-preparation.netlify.app/" class="back-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Kembali ke Kalkulator
+      </a>
+
+      <div class="mt-10 text-center text-slate-500 italic text-sm">
+          “Accurate calculations ensure smooth production and optimal efficiency.”
+      </div>
+
+      <footer class="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+          <p class="mb-1">&copy; 2025 Cost Per Ton Production Calculator. All rights reserved.</p>
+          <p>Developed by <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> for <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+      </footer>
     </div>
-
-    <a href="index.html" class="back-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Kembali ke Kalkulator
-    </a>
-  </div>
+  </main>
 
   <script>
+    /**
+     * Calculates the total production cost per kg and per ton based on various input parameters.
+     * This includes raw material, starch & chemical, electricity & steam, labor, overhead,
+     * water & waste treatment costs, along with production rate, operating hours, and operating days.
+     * Displays the results or an error message if inputs are invalid.
+     */
     function calculateCost() {
       const fields = [
         'rawMaterialCost', 'starchCost', 'electricityCost',
@@ -274,9 +296,10 @@
       const values = {};
       let valid = true;
 
+      // Validate and parse input values
       fields.forEach(id => {
         const val = parseFloat(document.getElementById(id).value);
-        // Allow 0 for cost inputs, but not for production-related inputs
+        // Allow 0 for cost inputs, but not for production-related inputs (must be positive)
         if (id === 'productionRate' || id === 'operatingHours' || id === 'operatingDays') {
             if (isNaN(val) || val <= 0) valid = false;
         } else {
@@ -285,6 +308,7 @@
         values[id] = val;
       });
 
+      // If any input is invalid, display an error message and stop
       if (!valid) {
         document.getElementById('errorMessage').textContent = 'Harap masukkan semua nilai dengan benar (nilai produksi harus positif, biaya non-negatif).';
         document.getElementById('errorMessage').classList.remove('hidden');
@@ -292,13 +316,25 @@
         return;
       }
 
+      // Calculate total cost per kg
       const costPerKg = values.rawMaterialCost + values.starchCost + values.electricityCost +
                         values.laborCost + values.overheadCost + values.waterCost;
 
+      // Calculate total production in kg
+      // productionRate (ton/hour) * operatingHours (hours/day) * operatingDays (days) * 1000 (kg/ton)
       const totalProductionKg = values.productionRate * values.operatingHours * values.operatingDays * 1000;
+
+      // Calculate total production cost
       const totalCost = costPerKg * totalProductionKg;
+
+      // Calculate cost per ton (cost per kg * 1000 kg/ton)
       const costPerTon = costPerKg * 1000;
 
+      /**
+       * Formats a number as Indonesian Rupiah currency.
+       * @param {number} n - The number to format.
+       * @returns {string} The formatted currency string.
+       */
       const formatRupiah = n => new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
@@ -306,11 +342,13 @@
         maximumFractionDigits: 2 // Ensure consistent 2 decimal places
       }).format(n);
 
-      document.getElementById('totalProductionKg').textContent = totalProductionKg.toLocaleString('id-ID');
+      // Display the calculated results in the respective HTML elements
+      document.getElementById('totalProductionKg').textContent = totalProductionKg.toLocaleString('id-ID'); // Format with locale for thousands separator
       document.getElementById('totalCost').textContent = formatRupiah(totalCost);
       document.getElementById('costPerKg').textContent = formatRupiah(costPerKg);
       document.getElementById('costPerTon').textContent = formatRupiah(costPerTon);
 
+      // Hide error message and show results section
       document.getElementById('errorMessage').classList.add('hidden');
       document.getElementById('results').classList.remove('hidden');
     }

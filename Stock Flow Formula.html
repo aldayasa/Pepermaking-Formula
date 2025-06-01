@@ -4,27 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stock Flow Calculator</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="https://cdn.tailwindcss.com"></script> <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inter', sans-serif;
       background-color: #f0f2f5; /* Light background */
       color: #333; /* Dark text */
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      display: flex; /* Use flexbox for overall layout */
+      flex-direction: column; /* Stack nav, main, footer vertically */
+      min-height: 100vh; /* Ensure body takes full viewport height */
       margin: 0;
-      padding: 20px;
+      padding: 0; /* Remove body padding as main will handle it */
       box-sizing: border-box;
+      overflow-x: hidden; /* Prevent horizontal scroll */
     }
+    /* Ensure main content pushes footer down */
+    main {
+      flex-grow: 1; /* Allows main to take up available space */
+      display: flex; /* For centering content within main */
+      justify-content: center;
+      align-items: flex-start; /* Align items to start to prevent card from stretching too much */
+      padding: 2rem 1rem; /* Padding for main content */
+      margin-top: 64px; /* Space for fixed nav (adjust if nav height changes) */
+    }
+    @media (min-width: 640px) { /* Adjust margin-top for larger screens if nav height changes */
+      main {
+        margin-top: 72px; /* Example adjustment for larger nav on desktop */
+      }
+    }
+
     .card {
       border-radius: 1rem;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
       max-width: 700px;
       width: 100%;
-      margin: auto;
+      /* margin: auto; - Removed as main handles centering */
       background-color: #ffffff; /* White card background */
     }
     .card-header {
@@ -58,13 +74,7 @@
       border-radius: 0.75rem;
       border: 1px solid #28a745;
     }
-    footer {
-      text-align: center;
-      margin-top: auto;
-      padding: 1rem 0;
-      font-size: 0.9rem;
-      color: #555;
-    }
+    /* Removed direct footer styling as it's now handled by the common footer structure */
 
     /* Author section */
     #about {
@@ -200,101 +210,114 @@
   </style>
 </head>
 <body>
-
-  <div class="card shadow-lg">
-  <div class="card-header">
-    <i class="fas fa-calculator me-2"></i> Stock Flow Calculator
-  </div>
-  <div class="card-body p-4">
-    <form>
-    	<button type="button" class="btn btn-secondary" onclick="resetForm()">
-          <i class="fas fa-redo me-2"></i> Reset
-        </button><br><br>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Last Grammatur</label>
-          <div class="position-relative">
-            <input type="number" class="form-control pe-5 ps-5" id="lastGrammatur" step="0.01" placeholder="contoh:  150">
-            <i class="fas fa-weight-hanging position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">GSM</span>
-          </div>
-        </div>
-        <div class="col-md-6 mt-3 mt-md-0">
-          <label class="form-label">New Grammatur</label>
-          <div class="position-relative">
-            <input type="number" class="form-control pe-5 ps-5" id="newGrammatur" step="0.01" placeholder="contoh:  125">
-            <i class="fas fa-weight-hanging position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">GSM</span>
-          </div>
-        </div>
+  <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+      <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+      <div class="space-x-6 text-sm">
+          <a href="https://starch-preparation.netlify.app/" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Home</a>
+          <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">About</a>
+          <a href="https://wa.me/62895410571547" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
       </div>
+  </nav>
 
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Last Speed</label>
-          <div class="position-relative">
-            <input type="number" class="form-control pe-5 ps-5" id="lastSpeed" step="0.01" placeholder="contoh:  690">
-            <i class="fas fa-wind position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">m/min</span>
+  <main>
+    <div class="card shadow-lg">
+      <div class="card-header">
+        <i class="fas fa-calculator me-2"></i> Stock Flow Calculator
+      </div>
+      <div class="card-body p-4">
+        <form>
+        	<button type="button" class="btn btn-secondary" onclick="resetForm()">
+              <i class="fas fa-redo me-2"></i> Reset
+            </button><br><br>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Last Grammatur</label>
+              <div class="position-relative">
+                <input type="number" class="form-control pe-5 ps-5" id="lastGrammatur" step="0.01" placeholder="contoh:  150">
+                <i class="fas fa-weight-hanging position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">GSM</span>
+              </div>
+            </div>
+            <div class="col-md-6 mt-3 mt-md-0">
+              <label class="form-label">New Grammatur</label>
+              <div class="position-relative">
+                <input type="number" class="form-control pe-5 ps-5" id="newGrammatur" step="0.01" placeholder="contoh:  125">
+                <i class="fas fa-weight-hanging position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">GSM</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="col-md-6 mt-3 mt-md-0">
-          <label class="form-label">New Speed</label>
-          <div class="position-relative">
-            <input type="number" class="form-control pe-5 ps-5" id="newSpeed" step="0.01" placeholder="contoh:  850">
-            <i class="fas fa-wind position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">m/min</span>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Last Speed</label>
+              <div class="position-relative">
+                <input type="number" class="form-control pe-5 ps-5" id="lastSpeed" step="0.01" placeholder="contoh:  690">
+                <i class="fas fa-wind position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">m/min</span>
+              </div>
+            </div>
+            <div class="col-md-6 mt-3 mt-md-0">
+              <label class="form-label">New Speed</label>
+              <div class="position-relative">
+                <input type="number" class="form-control pe-5 ps-5" id="newSpeed" step="0.01" placeholder="contoh:  850">
+                <i class="fas fa-wind position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">m/min</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="mb-4">
-        <label class="form-label">Last Stock Flow</label>
-        <div class="position-relative">
-          <input type="number" class="form-control pe-5 ps-5" id="lastStockFlow" step="0.01" placeholder="contoh:  13800">
-          <i class="fas fa-water position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-          <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">l/min</span>
-        </div>
+          <div class="mb-4">
+            <label class="form-label">Last Stock Flow</label>
+            <div class="position-relative">
+              <input type="number" class="form-control pe-5 ps-5" id="lastStockFlow" step="0.01" placeholder="contoh:  13800">
+              <i class="fas fa-water position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+              <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">l/min</span>
+            </div>
+          </div>
+          <div id="result" class="mt-4 d-none"></div><br>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-between mb-3">
+            <button type="button" class="btn btn-primary" onclick="calculate()">
+              <i class="fas fa-cogs me-2"></i> Hitung
+            </button>
+            
+            <button type="button" class="btn btn-info" onclick="toggleAboutSection()">
+              <i class="fas fa-user me-2"></i> Tentang Saya
+            </button>
+          </div>
+        </form>
       </div>
-<div id="result" class="mt-4 d-none"></div><br>
-      <div class="d-grid gap-2 d-md-flex justify-content-md-between mb-3">
-        <button type="button" class="btn btn-primary" onclick="calculate()">
-          <i class="fas fa-cogs me-2"></i> Hitung
-        </button>
-        
-        <button type="button" class="btn btn-info" onclick="toggleAboutSection()">
-          <i class="fas fa-user me-2"></i> Tentang Saya
-        </button>
-      </div>
-
-      
-    </form>
-  </div>
-</div>
-
-  <section id="about" class="d-none"> <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJ7j8ob_V0L2ziNOWWlzctULRhWaP9YWB_QfFdGDVni82wHdFtOb5Jcck&s=10" alt="Foto Penulis" />
-    <h1>Ardita Rizki Fauzi</h1>
-    <h3 style="color: #aad8ff; margin-top: 24px;">Fokus Keahlian</h3>
-    <hr style="border: 0; height: 1px; background: #444; margin: 12px auto; width: 60%;">
-    <ul>
-      <li>✓ Starch Preparation & Process Monitoring</li>
-      <li>✓ Pengembangan Rumus Perhitungan Industri</li>
-      <li>✓ Otomatisasi & Efisiensi Produksi</li>
-    </ul>
-    <p>
-      Saya adalah seorang profesional di industri kertas dengan spesialisasi dalam efisiensi proses dan kontrol kualitas, khususnya pada pengolahan pati (starch preparation).
-    </p>
-    <p>
-      Website ini saya bangun sebagai platform berbagi solusi praktis, alat bantu hitung, serta dokumentasi teknis untuk membantu teknisi dan operator bekerja lebih efektif dan presisi.
-    </p>
-    <div>
-      <a href="https://wa.me/62895410571547" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-      <a href="https://www.instagram.com/mcardhy/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
     </div>
-  </section>
 
-  <footer>
-    &copy; 2025 Ardita Rizki Fauzi. All rights reserved.
+    <section id="about" class="d-none"> <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJ7j8ob_V0L2ziNOWWlzctULRhWaP9YWB_QfFdGDVni82wHdFtOb5Jcck&s=10" alt="Foto Penulis" />
+      <h1>Ardita Rizki Fauzi</h1>
+      <h3 style="color: #aad8ff; margin-top: 24px;">Fokus Keahlian</h3>
+      <hr style="border: 0; height: 1px; background: #444; margin: 12px auto; width: 60%;">
+      <ul>
+        <li>✓ Starch Preparation & Process Monitoring</li>
+        <li>✓ Pengembangan Rumus Perhitungan Industri</li>
+        <li>✓ Otomatisasi & Efisiensi Produksi</li>
+      </ul>
+      <p>
+        Saya adalah seorang profesional di industri kertas dengan spesialisasi dalam efisiensi proses dan kontrol kualitas, khususnya pada pengolahan pati (starch preparation).
+      </p>
+      <p>
+        Website ini saya bangun sebagai platform berbagi solusi praktis, alat bantu hitung, serta dokumentasi teknis untuk membantu teknisi dan operator bekerja lebih efektif dan presisi.
+      </p>
+      <div>
+        <a href="https://wa.me/62895410571547" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        <a href="https://www.instagram.com/mcardhy/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+      </div>
+    </section>
+  </main>
+
+  <div class="mt-10 text-center text-gray-500 italic text-sm">
+      “Accurate calculations ensure smooth production and optimal efficiency.”
+  </div>
+
+  <footer class="mt-auto py-4 text-center text-gray-500 text-sm border-t border-gray-200">
+      <p class="mb-1">&copy; 2025 Stock Flow Calculator. All rights reserved.</p>
+      <p>Developed by <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> for <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
   </footer>
 
   <div id="customMessageBoxOverlay" class="custom-message-box-overlay">
@@ -309,7 +332,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
     /**
@@ -348,21 +371,21 @@
         header.classList.add('error');
         okBtn.classList.remove('d-none');
         okBtn.innerText = 'OK';
-        okBtn.classList.remove('btn-success', 'btn-warning', 'btn-danger');
+        okBtn.classList.remove('btn-success', 'btn-warning', 'btn-danger', 'btn-info', 'btn-secondary');
         okBtn.classList.add('btn-primary'); // Default primary color
         okBtn.onclick = hideCustomMessageBox;
       } else if (type === 'success') {
         header.classList.add('success');
         okBtn.classList.remove('d-none');
         okBtn.innerText = 'OK';
-        okBtn.classList.remove('btn-primary', 'btn-warning', 'btn-danger');
+        okBtn.classList.remove('btn-primary', 'btn-warning', 'btn-danger', 'btn-info', 'btn-secondary');
         okBtn.classList.add('btn-success'); // Green button for success
         okBtn.onclick = hideCustomMessageBox;
       } else if (type === 'warning') {
         header.classList.add('warning');
         okBtn.classList.remove('d-none');
         okBtn.innerText = 'OK';
-        okBtn.classList.remove('btn-primary', 'btn-success', 'btn-danger');
+        okBtn.classList.remove('btn-primary', 'btn-success', 'btn-danger', 'btn-info', 'btn-secondary');
         okBtn.classList.add('btn-warning'); // Yellow button for warning
         okBtn.onclick = hideCustomMessageBox;
       } else if (type === 'confirm') {
@@ -372,10 +395,10 @@
         confirmBtn.innerText = 'Reset'; // Specific text for reset confirmation
         cancelBtn.innerText = 'Batal';
 
-        confirmBtn.classList.remove('btn-primary', 'btn-success', 'btn-info', 'btn-secondary');
+        confirmBtn.classList.remove('btn-primary', 'btn-success', 'btn-info', 'btn-secondary', 'btn-warning');
         confirmBtn.classList.add('btn-danger'); // Red for reset confirmation
 
-        cancelBtn.classList.remove('btn-primary', 'btn-success', 'btn-info', 'btn-danger');
+        cancelBtn.classList.remove('btn-primary', 'btn-success', 'btn-info', 'btn-danger', 'btn-warning');
         cancelBtn.classList.add('btn-secondary'); // Grey for cancel
 
         confirmBtn.onclick = () => {
@@ -390,7 +413,7 @@
         header.classList.add('info');
         okBtn.classList.remove('d-none');
         okBtn.innerText = 'OK';
-        okBtn.classList.remove('btn-success', 'btn-warning', 'btn-danger');
+        okBtn.classList.remove('btn-success', 'btn-warning', 'btn-danger', 'btn-info', 'btn-secondary');
         okBtn.classList.add('btn-primary');
         okBtn.onclick = hideCustomMessageBox;
       }

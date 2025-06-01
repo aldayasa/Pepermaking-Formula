@@ -10,6 +10,12 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
+      display: flex; /* Use flexbox for overall layout */
+      flex-direction: column; /* Stack nav, main, footer vertically */
+      min-height: 100vh; /* Ensure body takes full viewport height */
+      color: #334155;
+      overflow-x: hidden; /* Prevent horizontal scroll */
     }
     .messagebox-overlay {
       background-color: rgba(0, 0, 0, 0.6);
@@ -43,50 +49,69 @@
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center py-8 px-4">
-  <div class="max-w-4xl w-full bg-white rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 transform transition-all duration-300 hover:scale-[1.01]">
-    <div class="flex flex-col items-center mb-8">
-      <i data-lucide="calculator" class="w-12 h-12 text-blue-600 mb-3"></i>
-      <h2 class="text-3xl sm:text-4xl font-extrabold text-blue-800 text-center leading-tight">
-        Kalkulator Total Massa & Sisa Stock
-      </h2>
-      <p class="text-gray-600 mt-2 text-center text-sm sm:text-base">Hitung estimasi massa dan sisa waktu operasional.</p>
+<body>
+  <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+    <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+    <div class="space-x-6 text-sm">
+        <a href="https://starch-preparation.netlify.app/" class="hover:underline">Home</a>
+        <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline">About</a>
+        <a href="https://wa.me/62895410571547" class="hover:underline">Contact</a>
     </div>
+  </nav>
 
-    <div class="overflow-x-auto rounded-lg shadow-inner border border-gray-200">
-      <table class="w-full text-sm sm:text-base text-center border-collapse">
-        <thead class="bg-blue-600 text-white">
-          <tr>
-            <th class="p-1 sm:p-2 md:p-3 border-r border-blue-700">Nama Tanki</th>
-            <th class="p-1 sm:p-2 md:p-3 border-r border-blue-700">Consistency (%)</th>
-            <th class="p-1 sm:p-2 md:p-3">Level (%)</th>
-          </tr>
-        </thead>
-        <tbody id="tbody" class="divide-y divide-gray-200"></tbody>
-      </table>
-    </div>
+  <main class="flex-grow flex items-center justify-center py-8 px-4 mt-20"> <div class="max-w-4xl w-full bg-white rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 transform transition-all duration-300 hover:scale-[1.01]">
+      <div class="flex flex-col items-center mb-8">
+        <i data-lucide="calculator" class="w-12 h-12 text-blue-600 mb-3"></i>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-blue-800 text-center leading-tight">
+          Kalkulator Total Massa & Sisa Stock
+        </h2>
+        <p class="text-gray-600 mt-2 text-center text-sm sm:text-base">Hitung estimasi massa dan sisa waktu operasional.</p>
+      </div>
 
-    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-      <div>
-        <label for="throughput" class="block text-lg font-semibold text-gray-700 mb-2">
-          Throughput (ton/jam):
-        </label>
-        <div class="relative">
-          <input type="number" id="throughput" value="31.442" step="0.001"
-                 class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg">
-          <i data-lucide="gauge" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+      <div class="overflow-x-auto rounded-lg shadow-inner border border-gray-200">
+        <table class="w-full text-sm sm:text-base text-center border-collapse">
+          <thead class="bg-blue-600 text-white">
+            <tr>
+              <th class="p-1 sm:p-2 md:p-3 border-r border-blue-700">Nama Tanki</th>
+              <th class="p-1 sm:p-2 md:p-3 border-r border-blue-700">Consistency (%)</th>
+              <th class="p-1 sm:p-2 md:p-3">Level (%)</th>
+            </tr>
+          </thead>
+          <tbody id="tbody" class="divide-y divide-gray-200"></tbody>
+        </table>
+      </div>
+
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+        <div>
+          <label for="throughput" class="block text-lg font-semibold text-gray-700 mb-2">
+            Throughput (ton/jam):
+          </label>
+          <div class="relative">
+            <input type="number" id="throughput" value="31.442" step="0.001"
+                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg">
+            <i data-lucide="gauge" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="flex justify-center md:justify-end">
+          <button onclick="calculate()"
+                  class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg
+                         transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105
+                         focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center text-lg">
+            <i data-lucide="play" class="w-5 h-5 mr-2"></i> Hitung
+          </button>
         </div>
       </div>
-      <div class="flex justify-center md:justify-end">
-        <button onclick="calculate()"
-                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg
-                       transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105
-                       focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center text-lg">
-          <i data-lucide="play" class="w-5 h-5 mr-2"></i> Hitung
-        </button>
+
+      <div class="mt-10 text-center text-slate-500 italic text-sm">
+          “Accurate calculations ensure smooth production and optimal efficiency.”
       </div>
+
+      <footer class="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+          <p class="mb-1">&copy; 2025 Kalkulator Sisa Stock. Hak Cipta Dilindungi.</p>
+          <p>Dikembangkan oleh <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> untuk <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+      </footer>
     </div>
-  </div>
+  </main>
 
   <div id="messagebox" class="fixed inset-0 hidden items-center justify-center messagebox-overlay">
     <div class="messagebox-content bg-white p-8 rounded-xl shadow-2xl relative transform transition-all duration-300 scale-95 opacity-0">
@@ -134,9 +159,13 @@
     const messagebox = document.getElementById("messagebox");
     const messageboxContent = messagebox.querySelector('.messagebox-content');
 
+    /**
+     * Populates the table with tank data, including default consistency and level values.
+     */
     function populateTable() {
-      tbody.innerHTML = '';
+      tbody.innerHTML = ''; // Clear existing rows
       tanks.forEach((name, index) => {
+        // Retrieve default volume, consistency, and level for the current tank
         const [vol, cons, lvl] = defaultData[index];
         const row = document.createElement("tr");
         row.className = "hover:bg-blue-50 transition duration-150";
@@ -148,59 +177,87 @@
           <td class="p-1 sm:p-2 md:p-3">
             <input type="number" step="0.01" value="${lvl}" class="level table-input">
           </td>
-          <td class="hidden volume">${vol}</td>
-        `;
+          <td class="hidden volume">${vol}</td> `;
         tbody.appendChild(row);
       });
     }
 
+    /**
+     * Calculates the total mass of stock and the remaining operational time.
+     * Displays the results in a custom message box.
+     */
     function calculate() {
       const rows = document.querySelectorAll("#tbody tr");
       let totalMass = 0;
+
+      // Iterate through each table row to calculate mass for each tank
       rows.forEach(row => {
-        const volume = parseFloat(row.querySelector(".volume").textContent) || 0;
-        const consistency = parseFloat(row.querySelector(".consistency").value) / 100 || 0;
-        const level = parseFloat(row.querySelector(".level").value) / 100 || 0;
+        // Get volume, consistency, and level from the row
+        const volume = parseFloat(row.querySelector(".volume").textContent) || 0; // Default to 0 if not a valid number
+        const consistency = parseFloat(row.querySelector(".consistency").value) / 100 || 0; // Convert % to decimal
+        const level = parseFloat(row.querySelector(".level").value) / 100 || 0; // Convert % to decimal
+
+        // Calculate mass for the current tank: Volume * Consistency * Level
         const mass = volume * consistency * level;
-        totalMass += mass;
+        totalMass += mass; // Add to total mass
       });
 
+      // Get the throughput value
       const throughput = parseFloat(document.getElementById("throughput").value);
-      let remainingTime = "Tidak dapat dihitung (throughput 0)";
+
+      let remainingTime = "Tidak dapat dihitung (throughput 0)"; // Default message for zero/invalid throughput
       if (throughput > 0) {
+        // Calculate remaining time in hours
         const hours = totalMass / throughput;
-        const jam = Math.floor(hours);
-        const menit = Math.round((hours - jam) * 60);
+        const jam = Math.floor(hours); // Get whole hours
+        const menit = Math.round((hours - jam) * 60); // Convert remaining fraction to minutes
         remainingTime = `${jam} jam ${menit} menit`;
+      } else if (isNaN(throughput) || throughput < 0) {
+          // Handle invalid throughput input
+          remainingTime = "Throughput tidak valid. Harap masukkan angka positif.";
       }
 
+
+      // Display results in the custom message box
       showMessagebox(totalMass.toFixed(3), remainingTime);
     }
 
+    /**
+     * Displays the custom message box with calculation results.
+     * @param {string} total - The calculated total mass.
+     * @param {string} time - The calculated remaining operational time.
+     */
     function showMessagebox(total, time) {
       document.getElementById("messagebox-total").textContent = `${total} ton`;
       document.getElementById("messagebox-sisaWaktuTP").textContent = time;
       messagebox.classList.remove("hidden");
-      messagebox.classList.add("flex");
+      messagebox.classList.add("flex"); // Use flex to center
+      // Animate the message box content for a smooth appearance
       setTimeout(() => {
         messageboxContent.classList.remove("scale-95", "opacity-0");
         messageboxContent.classList.add("scale-100", "opacity-100");
       }, 10);
     }
 
+    /**
+     * Hides the custom message box.
+     */
     function hideMessagebox() {
+      // Animate the message box content for a smooth disappearance
       messageboxContent.classList.remove("scale-100", "opacity-100");
       messageboxContent.classList.add("scale-95", "opacity-0");
       setTimeout(() => {
         messagebox.classList.remove("flex");
         messagebox.classList.add("hidden");
-      }, 300);
+      }, 300); // Match this timeout with the CSS transition duration
     }
 
+    // Initialize icons and populate the table when the window loads
     window.onload = () => {
-      lucide.createIcons();
-      populateTable();
+      lucide.createIcons(); // Initialize Lucide icons
+      populateTable(); // Populate the dynamic table
     };
   </script>
 </body>
 </html>
+

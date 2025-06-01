@@ -4,19 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kalkulator Campuran Air</title>
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     body {
-      background: #f5f7fa;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
+      display: flex; /* Use flexbox for overall layout */
+      flex-direction: column; /* Stack nav, main, footer vertically */
+      min-height: 100vh; /* Ensure body takes full viewport height */
+      color: #334155;
+      overflow-x: hidden; /* Prevent horizontal scroll */
     }
+    /* Ensure main content pushes footer down */
+    main {
+      flex-grow: 1; /* Allows main to take up available space */
+      display: flex; /* For centering content within main */
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem; /* Padding for main content */
+      margin-top: 64px; /* Space for fixed nav (adjust if nav height changes) */
+    }
+    @media (min-width: 640px) { /* Adjust margin-top for larger screens if nav height changes */
+      main {
+        margin-top: 72px; /* Example adjustment for larger nav on desktop */
+      }
+    }
+
     .container {
       max-width: 500px;
-      margin-top: 60px;
       background: #ffffff;
       padding: 30px;
       border-radius: 15px;
@@ -39,57 +58,98 @@
       border-radius: 10px;
       margin-bottom: 20px;
       display: none;
+      color: #0c4a6e; /* Darker blue for results */
+    }
+    #hasil strong {
+      color: #1e3a8a; /* Darker blue for strong text */
     }
   </style>
 </head>
 <body>
-
-<div class="container text-center">
-  <h3 class="mb-4"><i class="fas fa-temperature-half"></i> Kalkulator Campuran Air</h3>
-
-  <div id="hasil" class="text-start"></div>
-
-  <form id="waterForm" onreset="resetHasil()">
-    <div class="mb-3 text-start">
-      <label class="form-label"><i class="fas fa-glass-water"></i> Total Volume (ml)</label>
-      <input type="number" id="total_volume" class="form-control" placeholder="Contoh: 240" required>
+<nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+    <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+    <div class="space-x-6 text-sm">
+        <a href="https://starch-preparation.netlify.app/" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Home</a>
+        <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">About</a>
+        <a href="https://wa.me/62895410571547" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
     </div>
-    <div class="mb-3 text-start">
-      <label class="form-label"><i class="fas fa-thermometer-three-quarters"></i> Suhu Target (°C)</label>
-      <input type="number" id="target_temp" class="form-control" placeholder="Contoh: 40" required>
-    </div>
-    <button type="button" class="btn btn-custom mb-2" onclick="hitungCampuran()">
-      <i class="fas fa-calculator"></i> Hitung
-    </button>
-    <button type="reset" class="btn btn-outline-secondary w-100">
-      <i class="fas fa-rotate-left"></i> Reset
-    </button>
-  </form>
-</div>
+</nav>
 
-<!-- Script -->
+<main>
+  <div class="container text-center">
+    <h3 class="mb-4"><i class="fas fa-temperature-half"></i> Kalkulator Campuran Air</h3>
+
+    <div id="hasil" class="text-start"></div>
+
+    <form id="waterForm" onreset="resetHasil()">
+      <div class="mb-3 text-start">
+        <label class="form-label"><i class="fas fa-glass-water"></i> Total Volume (ml)</label>
+        <input type="number" id="total_volume" class="form-control" placeholder="Contoh: 240" required>
+      </div>
+      <div class="mb-3 text-start">
+        <label class="form-label"><i class="fas fa-thermometer-three-quarters"></i> Suhu Target (°C)</label>
+        <input type="number" id="target_temp" class="form-control" placeholder="Contoh: 40" required>
+      </div>
+      <button type="button" class="btn btn-custom mb-2" onclick="hitungCampuran()">
+        <i class="fas fa-calculator"></i> Hitung
+      </button>
+      <button type="reset" class="btn btn-outline-secondary w-100">
+        <i class="fas fa-rotate-left"></i> Reset
+      </button>
+    </form>
+
+    <div class="mt-10 text-center text-gray-500 italic text-sm">
+        “Accurate calculations ensure smooth production and optimal efficiency.”
+    </div>
+  </div>
+</main>
+
+<footer class="mt-auto py-4 text-center text-gray-500 text-sm border-t border-gray-200">
+    <p class="mb-1">&copy; 2025 Kalkulator Campuran Air. Hak Cipta Dilindungi.</p>
+    <p>Dikembangkan oleh <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> untuk <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+</footer>
+
 <script>
   function hitungCampuran() {
     const V = parseFloat(document.getElementById("total_volume").value);
     const Ttarget = parseFloat(document.getElementById("target_temp").value);
 
-    const Thot = 100;
-    const Tcold = 25;
+    const Thot = 100; // Suhu air panas
+    const Tcold = 25; // Suhu air suhu ruangan
+
     const hasilDiv = document.getElementById("hasil");
 
-    if (isNaN(V) || isNaN(Ttarget) || Ttarget <= Tcold || Ttarget >= Thot) {
+    // Validasi input
+    if (isNaN(V) || V <= 0 || isNaN(Ttarget)) {
       hasilDiv.style.display = 'block';
-      hasilDiv.innerHTML = `<div class="text-danger"><strong>Error:</strong> Suhu target harus antara 25°C dan 100°C, dan volume harus valid.</div>`;
+      hasilDiv.innerHTML = `<div class="text-danger"><strong>Error:</strong> Harap masukkan volume total yang valid dan suhu target.</div>`;
       return;
     }
 
-    const x = (V * (Ttarget - Tcold)) / (Thot - Tcold); // air panas
-    const y = V - x; // air suhu ruangan
+    // Validasi suhu target
+    if (Ttarget < Tcold || Ttarget > Thot) {
+      hasilDiv.style.display = 'block';
+      hasilDiv.innerHTML = `<div class="text-danger"><strong>Error:</strong> Suhu target harus antara ${Tcold}°C dan ${Thot}°C.</div>`;
+      return;
+    }
+
+    // Rumus untuk menghitung volume air panas (x)
+    // Berdasarkan prinsip konservasi energi: m_hot * C_p * (T_hot - T_target) = m_cold * C_p * (T_target - T_cold)
+    // Asumsi densitas dan kapasitas panas spesifik air sama, sehingga bisa menggunakan volume.
+    // x * (Thot - Ttarget) = y * (Ttarget - Tcold)
+    // x + y = V => y = V - x
+    // x * (Thot - Ttarget) = (V - x) * (Ttarget - Tcold)
+    // x * Thot - x * Ttarget = V * Ttarget - V * Tcold - x * Ttarget + x * Tcold
+    // x * Thot - x * Tcold = V * Ttarget - V * Tcold
+    // x * (Thot - Tcold) = V * (Ttarget - Tcold)
+    // x = V * (Ttarget - Tcold) / (Thot - Tcold)
+    const x = (V * (Ttarget - Tcold)) / (Thot - Tcold); // Volume air panas
+    const y = V - x; // Volume air suhu ruangan
 
     hasilDiv.style.display = 'block';
     hasilDiv.innerHTML = `
-      <p><strong>Air Panas (100°C):</strong> ${x.toFixed(1)} ml</p>
-      <p><strong>Air Suhu Ruangan (25°C):</strong> ${y.toFixed(1)} ml</p>
+      <p><strong>Air Panas (${Thot}°C):</strong> ${x.toFixed(1)} ml</p>
+      <p><strong>Air Suhu Ruangan (${Tcold}°C):</strong> ${y.toFixed(1)} ml</p>
     `;
   }
 
@@ -100,7 +160,7 @@
   }
 </script>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

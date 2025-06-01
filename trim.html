@@ -10,14 +10,25 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
-            box-sizing: border-box;
+            display: flex; /* Use flexbox for overall layout */
+            flex-direction: column; /* Stack nav, main, footer vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
             color: #334155;
             overflow-x: hidden;
+        }
+        /* Ensure main content pushes footer down */
+        main {
+            flex-grow: 1; /* Allows main to take up available space */
+            display: flex; /* For centering content within main */
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem; /* Padding for main content */
+            margin-top: 64px; /* Space for fixed nav (adjust if nav height changes) */
+        }
+        @media (min-width: 640px) { /* Adjust margin-top for larger screens if nav height changes */
+            main {
+                margin-top: 72px; /* Example adjustment for larger nav on desktop */
+            }
         }
         .calculator-container {
             background-color: #ffffff;
@@ -248,50 +259,73 @@
     </style>
 </head>
 <body>
-    <div class="calculator-container">
-        <h1>Trim/Cutting Optimization Calculator</h1>
-        <p class="description">
-            This calculator helps you analyze the efficiency of cutting a jumbo roll into mini rolls by calculating the total trim waste. Enter the width of your jumbo roll and the desired widths of your mini rolls.
-        </p>
+    <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+        <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+        <div class="space-x-6 text-sm">
+            <a href="https://starch-preparation.netlify.app/" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Home</a>
+            <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">About</a>
+            <a href="https://wa.me/62895410571547" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
+        </div>
+    </nav>
 
-        <div class="input-grid">
-            <div class="input-group">
-                <label for="jumboRollWidth">Jumbo Roll Width (mm):</label>
-                <input type="number" id="jumboRollWidth" class="input-field" placeholder="contoh: 5000" step="0.01">
-            </div>
+    <main>
+        <div class="calculator-container">
+            <h1>Trim/Cutting Optimization Calculator</h1>
+            <p class="description">
+                This calculator helps you analyze the efficiency of cutting a jumbo roll into mini rolls by calculating the total trim waste. Enter the width of your jumbo roll and the desired widths of your mini rolls.
+            </p>
 
-            <div class="input-group">
-                <label for="miniRollsDesired">Desired Mini Roll Widths (mm):</label>
-                <div id="miniRollsInputContainer">
-                    <div class="roll-input-container">
-                        <input type="number" class="mini-roll-width-input input-field" placeholder="contoh: 700" step="0.01">
-                        <button onclick="removeMiniRollInput(this)">X</button>
-                    </div>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="jumboRollWidth">Jumbo Roll Width (mm):</label>
+                    <input type="number" id="jumboRollWidth" class="input-field" placeholder="contoh: 5000" step="0.01">
                 </div>
-                <button onclick="addMiniRollInput()" class="add-roll-button">Add Mini Roll Width</button>
+
+                <div class="input-group">
+                    <label for="miniRollsDesired">Desired Mini Roll Widths (mm):</label>
+                    <div id="miniRollsInputContainer">
+                        <div class="roll-input-container">
+                            <input type="number" class="mini-roll-width-input input-field" placeholder="contoh: 700" step="0.01">
+                            <button onclick="removeMiniRollInput(this)">X</button>
+                        </div>
+                    </div>
+                    <button onclick="addMiniRollInput()" class="add-roll-button">Add Mini Roll Width</button>
+                </div>
             </div>
+
+            <button onclick="calculateTrimWaste()" class="button-primary">Calculate Trim Waste</button>
+
+            <div id="errorMessage" class="error-message hidden"></div>
+
+            <div id="results" class="result-section hidden">
+                <div class="result-item">Total Width of Mini Rolls: <strong id="totalMiniRollWidth"></strong></div>
+                <div class="result-item">Trim Waste: <strong id="trimWaste"></strong></div>
+                <div class="result-item">Trim Waste Percentage: <strong id="trimWastePercentage"></strong></div>
+            </div>
+
+            <a href="https://starch-preparation.netlify.app/" class="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Calculators
+            </a>
+
+            <div class="mt-10 text-center text-slate-500 italic text-sm">
+                “Accurate calculations ensure smooth production and optimal efficiency.”
+            </div>
+
+            <footer class="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p class="mb-1">&copy; 2025 Trim/Cutting Optimization Calculator. All rights reserved.</p>
+                <p>Developed by <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> for <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+            </footer>
         </div>
-
-        <button onclick="calculateTrimWaste()" class="button-primary">Calculate Trim Waste</button>
-
-        <div id="errorMessage" class="error-message hidden"></div>
-
-        <div id="results" class="result-section hidden">
-            <div class="result-item">Total Width of Mini Rolls: <strong id="totalMiniRollWidth"></strong></div>
-            <div class="result-item">Trim Waste: <strong id="trimWaste"></strong></div>
-            <div class="result-item">Trim Waste Percentage: <strong id="trimWastePercentage"></strong></div>
-        </div>
-
-        <a href="index.html" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Calculators
-        </a>
-    </div>
+    </main>
 
     <script>
+        /**
+         * Adds a new input field for mini roll width.
+         */
         function addMiniRollInput() {
             const container = document.getElementById('miniRollsInputContainer');
             const div = document.createElement('div');
@@ -303,23 +337,35 @@
             container.appendChild(div);
         }
 
+        /**
+         * Removes a mini roll width input field.
+         * Ensures at least one input field remains.
+         * @param {HTMLElement} buttonElement - The 'X' button element that was clicked.
+         */
         function removeMiniRollInput(buttonElement) {
             const container = document.getElementById('miniRollsInputContainer');
+            const errorMessage = document.getElementById('errorMessage'); // Get error message element
+
             if (container.children.length > 1) { // Ensure at least one input remains
                 buttonElement.closest('.roll-input-container').remove();
+                errorMessage.classList.add('hidden'); // Hide error if removal is successful
             } else {
-                document.getElementById('errorMessage').textContent = 'At least one mini roll width is required.';
-                document.getElementById('errorMessage').classList.remove('hidden');
+                errorMessage.textContent = 'At least one mini roll width is required.';
+                errorMessage.classList.remove('hidden');
             }
         }
 
+        /**
+         * Calculates the trim waste and its percentage based on jumbo roll width
+         * and desired mini roll widths. Displays the results or an error message.
+         */
         function calculateTrimWaste() {
             const jumboRollWidth = parseFloat(document.getElementById('jumboRollWidth').value);
             const miniRollWidthInputs = document.querySelectorAll('.mini-roll-width-input');
             const errorMessage = document.getElementById('errorMessage');
             const resultsDiv = document.getElementById('results');
 
-            // Reset error message and hide results
+            // Reset error message and hide results before new calculation
             errorMessage.classList.add('hidden');
             resultsDiv.classList.add('hidden');
 
@@ -334,6 +380,7 @@
             let hasInvalidMiniRollInput = false;
             const miniRollWidths = [];
 
+            // Iterate through mini roll inputs for validation and summation
             miniRollWidthInputs.forEach(input => {
                 const width = parseFloat(input.value);
                 if (isNaN(width) || width <= 0) {
@@ -344,18 +391,21 @@
                 }
             });
 
+            // Check for invalid mini roll inputs
             if (hasInvalidMiniRollInput) {
                 errorMessage.textContent = 'Please enter valid positive numbers for all Mini Roll Widths.';
                 errorMessage.classList.remove('hidden');
                 return;
             }
 
+            // Check if any mini roll widths were entered
             if (miniRollWidths.length === 0) {
                 errorMessage.textContent = 'Please add at least one Mini Roll Width.';
                 errorMessage.classList.remove('hidden');
                 return;
             }
 
+            // Validate that total mini roll width does not exceed jumbo roll width
             if (totalMiniRollWidth > jumboRollWidth) {
                 errorMessage.textContent = 'Total desired mini roll width cannot exceed Jumbo Roll Width.';
                 errorMessage.classList.remove('hidden');
@@ -365,15 +415,15 @@
             // Calculate trim waste
             const trimWaste = jumboRollWidth - totalMiniRollWidth;
             let trimWastePercentage = 0;
-            if (jumboRollWidth > 0) {
+            if (jumboRollWidth > 0) { // Avoid division by zero
                 trimWastePercentage = (trimWaste / jumboRollWidth) * 100;
             }
 
-            // Display results
+            // Display results in the respective HTML elements
             document.getElementById('totalMiniRollWidth').textContent = `${totalMiniRollWidth.toFixed(0)} mm`;
             document.getElementById('trimWaste').textContent = `${trimWaste.toFixed(0)} mm`;
             document.getElementById('trimWastePercentage').textContent = `${trimWastePercentage.toFixed(0)}%`;
-            resultsDiv.classList.remove('hidden');
+            resultsDiv.classList.remove('hidden'); // Show the results section
         }
     </script>
 </body>

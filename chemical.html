@@ -10,12 +10,9 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
-            box-sizing: border-box;
+            display: flex; /* Use flexbox for overall layout */
+            flex-direction: column; /* Stack nav, main, footer vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
             color: #334155;
             overflow-x: hidden;
         }
@@ -289,59 +286,74 @@
     </style>
 </head>
 <body>
-    <div class="calculator-container">
-        <h1>Chemical Consumption Calculator</h1>
-        <p class="description">
-            This calculator helps you determine either the required chemical flow rate (cc/min) based on dosage and production, or the chemical dosage (kg/ton) based on flow rate and production.
-        </p>
-
-        <div class="input-group">
-            <label for="mode">Calculation Mode:</label>
-            <select id="mode" class="select-field" onchange="toggleModeInputs()">
-                <option value="flow">Calculate Chemical Flow (cc/min)</option>
-                <option value="kgPerTon">Calculate Chemical Dosage (kg/ton)</option>
-            </select>
+    <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+        <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+        <div class="space-x-6 text-sm">
+            <a href="https://starch-preparation.netlify.app/" class="hover:underline">Home</a>
+            <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline">About</a>
+            <a href="https://wa.me/62895410571547" class="hover:underline">Contact</a>
         </div>
+    </nav>
 
-        <div id="flowModeInputs" class="input-grid">
+    <main class="flex-grow flex justify-center items-center px-4 py-10 mt-20"> <div class="calculator-container">
+            <h1>Chemical Consumption Calculator</h1>
+            <p class="description">
+                This calculator helps you determine either the required chemical flow rate (cc/min) based on dosage and production, or the chemical dosage (kg/ton) based on flow rate and production.
+            </p>
+
             <div class="input-group">
-                <label for="kgPerTonInput">Chemical Dosage (kg/ton of paper):</label>
-                <input type="number" id="kgPerTonInput" class="input-field" placeholder="contoh: 2" step="0.01">
+                <label for="mode">Calculation Mode:</label>
+                <select id="mode" class="select-field" onchange="toggleModeInputs()">
+                    <option value="flow">Calculate Chemical Flow (cc/min)</option>
+                    <option value="kgPerTon">Calculate Chemical Dosage (kg/ton)</option>
+                </select>
             </div>
-            <div class="input-group">
-                <label for="productionRateFlow">Paper Production Rate (ton/hour):</label>
-                <input type="number" id="productionRateFlow" class="input-field" placeholder="contoh: 27" step="0.01">
+
+            <div id="flowModeInputs" class="input-grid">
+                <div class="input-group">
+                    <label for="kgPerTonInput">Chemical Dosage (kg/ton of paper):</label>
+                    <input type="number" id="kgPerTonInput" class="input-field" placeholder="contoh: 2" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="productionRateFlow">Paper Production Rate (ton/hour):</label>
+                    <input type="number" id="productionRateFlow" class="input-field" placeholder="contoh: 27" step="0.01">
+                </div>
             </div>
+
+            <div id="kgPerTonModeInputs" class="input-grid hidden">
+                <div class="input-group">
+                    <label for="flowInput">Chemical Flow Rate (cc/min):</label>
+                    <input type="number" id="flowInput" class="input-field" placeholder="contoh: 1000" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="productionRateKgPerTon">Paper Production Rate (ton/hour):</label>
+                    <input type="number" id="productionRateKgPerTon" class="input-field" placeholder="contoh: 27" step="0.01">
+                </div>
+            </div>
+
+            <button onclick="calculate()" class="button-primary">Calculate</button>
+            <button onclick="showResetConfirmation()" class="button-secondary">Reset</button>
+
+            <div id="errorMessage" class="error-message hidden"></div>
+
+            <div id="results" class="result-section hidden">
+                <div class="result-item">Result: <strong id="resultValue"></strong></div>
+            </div>
+
+            <a href="https://starch-preparation.netlify.app/" class="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Calculators
+            </a>
+
+            <footer class="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p class="mb-1">&copy; 2025 Chemical Consumption Calculator. All rights reserved.</p>
+                <p>Developed by <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> for <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+            </footer>
         </div>
-
-        <div id="kgPerTonModeInputs" class="input-grid hidden">
-            <div class="input-group">
-                <label for="flowInput">Chemical Flow Rate (cc/min):</label>
-                <input type="number" id="flowInput" class="input-field" placeholder="contoh: 1000" step="0.01">
-            </div>
-            <div class="input-group">
-                <label for="productionRateKgPerTon">Paper Production Rate (ton/hour):</label>
-                <input type="number" id="productionRateKgPerTon" class="input-field" placeholder="contoh: 27" step="0.01">
-            </div>
-        </div>
-
-        <button onclick="calculate()" class="button-primary">Calculate</button>
-        <button onclick="showResetConfirmation()" class="button-secondary">Reset</button>
-
-        <div id="errorMessage" class="error-message hidden"></div>
-
-        <div id="results" class="result-section hidden">
-            <div class="result-item">Result: <strong id="resultValue"></strong></div>
-        </div>
-
-        <a href="index.html" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Calculators
-        </a>
-    </div>
+    </main>
 
     <div id="confirmationModal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -355,6 +367,10 @@
     </div>
 
     <script>
+        /**
+         * Toggles the visibility of input fields based on the selected calculation mode.
+         * Clears results and errors when the mode changes.
+         */
         function toggleModeInputs() {
             const mode = document.getElementById('mode').value;
             const flowModeDiv = document.getElementById('flowModeInputs');
@@ -373,13 +389,17 @@
             document.getElementById('resultValue').textContent = '';
         }
 
+        /**
+         * Performs the chemical consumption calculation based on the selected mode.
+         * Displays the result or an error message if inputs are invalid.
+         */
         function calculate() {
             const mode = document.getElementById('mode').value;
             const errorMessage = document.getElementById('errorMessage');
             const resultsDiv = document.getElementById('results');
             const resultValue = document.getElementById('resultValue');
 
-            // Reset error message and hide results
+            // Reset error message and hide results before new calculation
             errorMessage.classList.add('hidden');
             resultsDiv.classList.add('hidden');
             resultValue.textContent = '';
@@ -388,56 +408,52 @@
                 const kgPerTon = parseFloat(document.getElementById('kgPerTonInput').value);
                 const productionRate = parseFloat(document.getElementById('productionRateFlow').value); // ton/hour
 
+                // Validate inputs for 'flow' mode
                 if (isNaN(kgPerTon) || isNaN(productionRate) || kgPerTon <= 0 || productionRate <= 0) {
                     errorMessage.textContent = 'Please enter valid positive numbers for Chemical Dosage and Paper Production Rate.';
                     errorMessage.classList.remove('hidden');
                     return;
                 }
 
-                // Formula: flow (cc/min) = (kgPerTon * productionRate) / 0.06
-                // kgPerTon is kg/ton
-                // productionRate is ton/hour
-                // (kg/ton * ton/hour) = kg/hour
-                // We need cc/min.
-                // 1 kg of chemical is roughly 1000 cc (assuming density ~1 g/cc or 1 kg/L)
-                // 1 hour = 60 minutes
-                // So, (kg/hour * 1000 cc/kg) / 60 min/hour
-                // (kgPerTon * productionRate * 1000) / 60
-                // = (kgPerTon * productionRate) / 0.06 (This matches the user's formula)
+                // Formula to calculate chemical flow (cc/min)
+                // (kg/ton * ton/hour * 1000 cc/kg) / 60 min/hour
+                // Simplified: (kgPerTon * productionRate * 1000) / 60
+                // Which is equivalent to (kgPerTon * productionRate) / 0.06
                 const flow = (kgPerTon * productionRate) / 0.06;
                 resultValue.textContent = `${flow.toFixed(0)} cc/min`;
             } else { // mode === 'kgPerTon'
                 const flowVal = parseFloat(document.getElementById('flowInput').value); // cc/min
                 const productionRate2 = parseFloat(document.getElementById('productionRateKgPerTon').value); // ton/hour
 
+                // Validate inputs for 'kgPerTon' mode
                 if (isNaN(flowVal) || isNaN(productionRate2) || flowVal <= 0 || productionRate2 <= 0) {
                     errorMessage.textContent = 'Please enter valid positive numbers for Chemical Flow Rate and Paper Production Rate.';
                     errorMessage.classList.remove('hidden');
                     return;
                 }
 
-                // Formula: kgPerTon = (flowVal * 0.06) / productionRate2
-                // flowVal is cc/min
-                // productionRate2 is ton/hour
-                // (cc/min * 0.06) / (ton/hour)
-                // 0.06 is likely a combined conversion factor: (kg/ton) / (cc/min)
-                // Let's re-derive:
-                // Chemical Mass Flow (kg/min) = flowVal (cc/min) / 1000 cc/kg (assuming density ~1 g/cc)
-                // Paper Production Rate (ton/min) = productionRate2 (ton/hour) / 60 min/hour
-                // kg/ton = Chemical Mass Flow (kg/min) / Paper Production Rate (ton/min)
-                // kg/ton = (flowVal / 1000) / (productionRate2 / 60)
-                // kg/ton = (flowVal * 60) / (productionRate2 * 1000)
-                // kg/ton = (flowVal * 0.06) / productionRate2 (This matches the user's formula)
+                // Formula to calculate chemical dosage (kg/ton)
+                // (flowVal (cc/min) / 1000 cc/kg) / (productionRate2 (ton/hour) / 60 min/hour)
+                // Simplified: (flowVal * 60) / (productionRate2 * 1000)
+                // Which is equivalent to (flowVal * 0.06) / productionRate2
                 const kgPerTon = (flowVal * 0.06) / productionRate2;
                 resultValue.textContent = `${kgPerTon.toFixed(2)} kg/ton`;
             }
-            resultsDiv.classList.remove('hidden');
+            resultsDiv.classList.remove('hidden'); // Show the results section
         }
 
+        /**
+         * Displays the reset confirmation modal.
+         */
         function showResetConfirmation() {
             document.getElementById('confirmationModal').classList.remove('hidden');
         }
 
+        /**
+         * Resets all input fields and clears results/errors if confirmed.
+         * Hides the confirmation modal.
+         * @param {boolean} confirmed - True if the reset is confirmed, false otherwise.
+         */
         function resetForm(confirmed) {
             document.getElementById('confirmationModal').classList.add('hidden'); // Hide modal
 
@@ -452,7 +468,7 @@
             }
         }
 
-        // Initialize display based on default mode
+        // Initialize display based on default mode when the DOM content is fully loaded
         document.addEventListener('DOMContentLoaded', toggleModeInputs);
     </script>
 </body>

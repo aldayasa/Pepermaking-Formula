@@ -1,219 +1,323 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kalkulator Perbandingan Takaran Bahan</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kalkulator Perbandingan Takaran Bahan</title>
 
-  <!-- Bootstrap 5 CSS -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
-  <!-- FontAwesome -->
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    rel="stylesheet"
-  />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      background: linear-gradient(135deg, #e0f2f7 0%, #cce7f5 100%);
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
-    .card {
-      max-width: 600px;
-      margin: auto;
-      border-radius: 1rem;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    }
-    h2 {
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-      color: white;
-      padding: 1.25rem 1rem;
-      border-radius: 1rem 1rem 0 0;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      user-select: none;
-    }
-    .input-name {
-      min-width: 0; /* fix flex shrinking */
-    }
-    .input-amount {
-      max-width: 100px;
-    }
-    .btn-add {
-      max-width: 180px;
-    }
-    .btn-remove {
-      color: #dc3545;
-      border: none;
-      background: transparent;
-      font-size: 1.3rem;
-      cursor: pointer;
-      padding: 0;
-      line-height: 1;
-    }
-    .btn-remove:hover {
-      color: #a71d2a;
-    }
-    .modal-content {
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-}
 
-.modal-header {
-  background: linear-gradient(135deg, #0d6efd, #4f94fd);
-  color: white;
-  border-bottom: none;
-  align-items: center;
-}
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); /* Soft, bright gradient */
+        display: flex; /* Use flexbox for overall layout */
+        flex-direction: column; /* Stack nav, main, footer vertically */
+        min-height: 100vh; /* Ensure body takes full viewport height */
+        color: #334155;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+      }
+      /* Ensure main content pushes footer down */
+      main {
+        flex-grow: 1; /* Allows main to take up available space */
+        display: flex; /* For centering content within main */
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 1rem; /* Padding for main content */
+        margin-top: 64px; /* Space for fixed nav (adjust if nav height changes) */
+      }
+      @media (min-width: 640px) { /* Adjust margin-top for larger screens if nav height changes */
+        main {
+          margin-top: 72px; /* Example adjustment for larger nav on desktop */
+        }
+      }
 
-.modal-header .modal-title {
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+      .card {
+        max-width: 600px;
+        width: 100%; /* Ensure card takes full width up to max-width */
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        background-color: #ffffff; /* Explicitly white */
+        padding: 1.5rem; /* Default padding for card */
+      }
+      @media (min-width: 640px) {
+        .card {
+          padding: 2.5rem; /* Larger padding on larger screens */
+        }
+      }
 
-.modal-header .modal-title i {
-  font-size: 1.2rem;
-}
+      h2 {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); /* Blue gradient for header */
+        color: white;
+        padding: 1.25rem 1rem;
+        border-radius: 1rem 1rem 0 0;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        user-select: none;
+        font-weight: 700; /* Bold */
+        font-size: 1.75rem; /* Larger font size */
+      }
+      @media (min-width: 640px) {
+        h2 {
+          font-size: 2.25rem;
+        }
+      }
 
-.modal-body {
-  background-color: #f8f9fa;
-  font-size: 1rem;
-  color: #333;
-  padding: 1.5rem;
-}
+      .input-name {
+        min-width: 0; /* fix flex shrinking */
+      }
+      .input-amount {
+        max-width: 100px;
+      }
+      .btn-add {
+        max-width: 180px;
+      }
+      .btn-remove {
+        color: #dc3545;
+        border: none;
+        background: transparent;
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+      }
+      .btn-remove:hover {
+        color: #a71d2a;
+      }
+      .modal-content {
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
 
-.modal-body ul {
-  padding-left: 1.2rem;
-  margin-top: 1rem;
-}
+      .modal-header {
+        background: linear-gradient(135deg, #0d6efd, #4f94fd);
+        color: white;
+        border-bottom: none;
+        align-items: center;
+      }
 
-.modal-footer {
-  border-top: none;
-  background-color: #f0f0f0;
-  padding: 1rem 1.5rem;
-}
-  </style>
+      .modal-header .modal-title {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .modal-header .modal-title i {
+        font-size: 1.2rem;
+      }
+
+      .modal-body {
+        background-color: #f8f9fa;
+        font-size: 1rem;
+        color: #333;
+        padding: 1.5rem;
+      }
+
+      .modal-body ul {
+        padding-left: 1.2rem;
+        margin-top: 1rem;
+      }
+
+      .modal-footer {
+        border-top: none;
+        background-color: #f0f0f0;
+        padding: 1rem 1.5rem;
+      }
+
+      /* Custom Toast Colors for different types */
+      .toast-custom.toast-success {
+        background-color: #dcfce7; /* green-100 */
+        color: #166534; /* green-800 */
+        border-color: #bbf7d0; /* green-200 */
+      }
+      .toast-custom.toast-success .toast-icon svg { color: #22c55e; /* green-500 */ }
+
+      .toast-custom.toast-error {
+        background-color: #fee2e2; /* red-100 */
+        color: #991b1b; /* red-800 */
+        border-color: #fecaca; /* red-200 */
+      }
+      .toast-custom.toast-error .toast-icon svg { color: #ef4444; /* red-500 */ }
+
+      .toast-custom.toast-warning {
+        background-color: #fffbeb; /* yellow-100 */
+        color: #92400e; /* yellow-800 */
+        border-color: #fde68a; /* yellow-200 */
+      }
+      .toast-custom.toast-warning .toast-icon svg { color: #f59e0b; /* yellow-500 */ }
+
+      .toast-custom.toast-info {
+        background-color: #e0f2fe; /* blue-100 */
+        color: #1e40af; /* blue-800 */
+        border-color: #bfdbfe; /* blue-200 */
+      }
+      .toast-custom.toast-info .toast-icon svg { color: #3b82f6; /* blue-500 */ }
+
+      /* General toast styling */
+      .toast-custom {
+        border-radius: 0.75rem; /* rounded-xl */
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+      }
+      .toast-custom .toast-icon svg {
+        width: 24px;
+        height: 24px;
+      }
+      /* Style the OK button within the toast */
+      .toast-custom #toastOkBtn {
+          background-color: #3b82f6; /* blue-500 */
+          color: white;
+          border: none;
+          border-radius: 0.5rem; /* rounded-lg */
+          padding: 0.5rem 1rem;
+          font-weight: 600;
+          transition: background-color 0.2s ease;
+      }
+      .toast-custom #toastOkBtn:hover {
+          background-color: #2563eb; /* blue-600 */
+      }
+    </style>
 </head>
 <body>
-
-<div class="card p-4 bg-white">
-  <h2>Kalkulator Perbandingan Takaran Bahan</h2>
-
-  <div class="mb-3">
-    <label for="airAwal" class="form-label fw-semibold">Air Awal (gram atau ml):</label>
-    <input type="number" class="form-control" id="airAwal" placeholder="Masukkan jumlah air awal" min="1" />
-  </div>
-
-  <div id="bahanContainer" class="row g-3 mb-2">
-    <div class="col-12 col-md-6 d-flex gap-2 align-items-center bahan-row">
-      <input
-        type="text"
-        class="form-control input-name"
-        placeholder="Nama bahan 1"
-      />
-      <input
-        type="number"
-        class="form-control input-amount"
-        placeholder="Takaran gram"
-        min="0"
-        step="any"
-      />
-      <button class="btn-remove" title="Hapus bahan" onclick="removeBahan(this)" aria-label="Hapus bahan"><i class="fa-solid fa-xmark"></i></button>
+<nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+    <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+    <div class="space-x-6 text-sm">
+        <a href="https://starch-preparation.netlify.app/" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Home</a>
+        <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">About</a>
+        <a href="https://wa.me/62895410571547" class="hover:underline text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
     </div>
-    <div class="col-12 col-md-6 d-flex gap-2 align-items-center bahan-row">
-      <input
-        type="text"
-        class="form-control input-name"
-        placeholder="Nama bahan 2"
-      />
-      <input
-        type="number"
-        class="form-control input-amount"
-        placeholder="Takaran gram"
-        min="0"
-        step="any"
-      />
-      <button class="btn-remove" title="Hapus bahan" onclick="removeBahan(this)" aria-label="Hapus bahan"><i class="fa-solid fa-xmark"></i></button>
+</nav>
+
+<main>
+  <div class="card">
+    <h2>Kalkulator Perbandingan Takaran Bahan</h2>
+<br>
+    <div class="mb-3">
+      <label for="airAwal" class="form-label fw-semibold">Air Awal (gram atau ml):</label>
+      <input type="number" class="form-control" id="airAwal" placeholder="Masukkan jumlah air awal" min="1" />
     </div>
-  </div>
 
-  <button
-    class="btn btn-success btn-add d-flex align-items-center gap-2 mb-4"
-    onclick="addBahan()"
-    type="button"
-    aria-label="Tambah bahan baru"
-    title="Tambah bahan baru"
-  >
-    <i class="fa-solid fa-plus"></i> Tambah Bahan Baru
-  </button>
+    <div id="bahanContainer" class="row g-3 mb-2">
+      <div class="col-12 col-md-6 d-flex gap-2 align-items-center bahan-row">
+        <input
+          type="text"
+          class="form-control input-name"
+          placeholder="Nama bahan 1"
+        />
+        <input
+          type="number"
+          class="form-control input-amount"
+          placeholder="Takaran gram"
+          min="0"
+          step="any"
+        />
+        <button class="btn-remove" title="Hapus bahan" onclick="removeBahan(this)" aria-label="Hapus bahan"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="col-12 col-md-6 d-flex gap-2 align-items-center bahan-row">
+        <input
+          type="text"
+          class="form-control input-name"
+          placeholder="Nama bahan 2"
+        />
+        <input
+          type="number"
+          class="form-control input-amount"
+          placeholder="Takaran gram"
+          min="0"
+          step="any"
+        />
+        <button class="btn-remove" title="Hapus bahan" onclick="removeBahan(this)" aria-label="Hapus bahan"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
 
-  <div class="mb-3">
-    <label for="airBaru" class="form-label fw-semibold">Air Baru (gram atau ml):</label>
-    <input type="number" class="form-control" id="airBaru" placeholder="Masukkan jumlah air baru" min="1" />
-  </div>
+    <button
+      class="btn btn-success btn-add d-flex align-items-center gap-2 mb-4"
+      onclick="addBahan()"
+      type="button"
+      aria-label="Tambah bahan baru"
+      title="Tambah bahan baru"
+    >
+      <i class="fa-solid fa-plus"></i> Tambah Bahan Baru
+    </button>
 
-  <div class="d-flex gap-2 mb-3">
-    <button class="btn btn-primary flex-grow-1" onclick="hitung()">Hitung Takaran Baru</button>
-    <button class="btn btn-outline-secondary" onclick="resetForm()" title="Reset semua input"><i class="fa-solid fa-rotate"></i></button>
-  </div>
+    <div class="mb-3">
+      <label for="airBaru" class="form-label fw-semibold">Air Baru (gram atau ml):</label>
+      <input type="number" class="form-control" id="airBaru" placeholder="Masukkan jumlah air baru" min="1" />
+    </div>
 
-  <!-- Modal Bootstrap untuk hasil -->
-  <div
-    class="modal fade"
-    id="hasilModal"
-    tabindex="-1"
-    aria-labelledby="hasilModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="hasilModalLabel">
-  <i class="fa-solid fa-circle-check"></i> Hasil Perhitungan
-</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body" id="modalBody">
-          <!-- Isi hasil muncul di sini -->
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Tutup
-          </button>
+    <div class="d-flex gap-2 mb-3">
+      <button class="btn btn-primary flex-grow-1" onclick="hitung()">Hitung Takaran Baru</button>
+      <button class="btn btn-outline-secondary" onclick="resetForm()" title="Reset semua input"><i class="fa-solid fa-rotate"></i></button>
+    </div>
+
+    <div
+      class="modal fade"
+      id="hasilModal"
+      tabindex="-1"
+      aria-labelledby="hasilModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="hasilModalLabel">
+    <i class="fa-solid fa-circle-check"></i> Hasil Perhitungan
+  </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="modalBody">
+            </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Tutup
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-</div>
+    <div class="mt-10 text-center text-gray-500 italic text-sm">
+        “Accurate calculations ensure smooth production and optimal efficiency.”
+    </div>
+
+    </div>
+</main>
+
+<footer class="mt-auto py-4 text-center text-gray-500 text-sm border-t border-gray-200">
+    <p class="mb-1">&copy; 2025 Kalkulator Perbandingan Takaran Bahan. Hak Cipta Dilindungi.</p>
+    <p>Dikembangkan oleh <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> untuk <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+</footer>
+
 <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080;">
-  <div id="alertToast" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="toastMessage">
-        <!-- Pesan muncul di sini -->
-      </div>
+  <div id="alertToast" class="toast align-items-center border shadow-lg toast-custom" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex p-3">
+      <div id="toastIcon" class="me-2"></div> <div class="toast-body flex-grow-1" id="toastMessage">
+        </div>
       <button type="button" class="btn btn-sm btn-primary me-2 my-auto" id="toastOkBtn">OK</button>
     </div>
   </div>
 </div>
-<!-- Bootstrap Bundle JS (includes Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -249,7 +353,7 @@
     const container = document.getElementById('bahanContainer');
     const rows = container.querySelectorAll('.bahan-row');
     if (rows.length <= 1) {
-      alert('Minimal harus ada 1 bahan.');
+      showAlert('Minimal harus ada 1 bahan.', 'warning'); // Changed to warning type
       return;
     }
     btn.closest('.bahan-row').remove();
@@ -291,16 +395,70 @@
     document.getElementById('modalBody').innerHTML = '';
   }
 
+  // Inisialisasi Toast Bootstrap
+  const toastEl = document.getElementById('alertToast');
+  const toast = new bootstrap.Toast(toastEl);
+
+  /**
+   * Menampilkan pesan alert kustom menggunakan Bootstrap Toast.
+   * @param {string} message - Pesan yang akan ditampilkan.
+   * @param {string} type - Tipe pesan ('info', 'success', 'warning', 'error').
+   */
+  function showAlert(message, type = 'info') {
+    const toastEl = document.getElementById('alertToast');
+    const toastMessageEl = document.getElementById('toastMessage');
+    const toastIconEl = document.getElementById('toastIcon');
+
+    // Reset kelas dan konten
+    toastEl.className = 'toast align-items-center border shadow-lg toast-custom'; // Kelas dasar untuk toast kustom
+    toastMessageEl.innerText = message;
+    toastIconEl.innerHTML = ''; // Bersihkan ikon sebelumnya
+
+    let iconSvg = '';
+    switch (type) {
+      case 'success':
+        toastEl.classList.add('toast-success');
+        iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>';
+        break;
+      case 'error':
+        toastEl.classList.add('toast-error');
+        iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-circle"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>';
+        break;
+      case 'warning':
+        toastEl.classList.add('toast-warning');
+        iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-triangle"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>';
+        break;
+      case 'info':
+      default:
+        toastEl.classList.add('toast-info');
+        iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
+        break;
+    }
+    toastIconEl.innerHTML = iconSvg; // Masukkan ikon SVG
+
+    // Tampilkan Toast
+    let bsToast = bootstrap.Toast.getInstance(toastEl);
+    if (!bsToast) {
+        bsToast = new bootstrap.Toast(toastEl);
+    }
+    bsToast.show();
+  }
+
+  // Tombol OK di Toast untuk sembunyikan Toast
+  document.getElementById('toastOkBtn').addEventListener('click', () => {
+    toast.hide();
+  });
+
   function hitung() {
     const airAwal = parseFloat(document.getElementById('airAwal').value);
     const airBaru = parseFloat(document.getElementById('airBaru').value);
 
     if (isNaN(airAwal) || airAwal <= 0) {
-      alert('Input Air Awal tidak valid! Harap isi dengan angka lebih besar dari 0.');
+      showAlert('Input Air Awal tidak valid! Harap isi dengan angka lebih besar dari 0.', 'error');
       return;
     }
     if (isNaN(airBaru) || airBaru <= 0) {
-      alert('Input Air Baru tidak valid! Harap isi dengan angka lebih besar dari 0.');
+      showAlert('Input Air Baru tidak valid! Harap isi dengan angka lebih besar dari 0.', 'error');
       return;
     }
 
@@ -314,11 +472,11 @@
       const amount = parseFloat(amountStr);
 
       if (!name) {
-        alert('Nama bahan tidak boleh kosong.');
+        showAlert('Nama bahan tidak boleh kosong.', 'error');
         return;
       }
       if (isNaN(amount) || amount < 0) {
-        alert(`Takaran bahan "${name}" harus angka positif atau nol.`);
+        showAlert(`Takaran bahan "${name}" harus angka positif atau nol.`, 'error');
         return;
       }
       bahanArr.push({ name, amount });
@@ -339,71 +497,8 @@
     const hasilModal = new bootstrap.Modal(document.getElementById('hasilModal'));
     hasilModal.show();
   }
-  // Inisialisasi Toast Bootstrap
-const toastEl = document.getElementById('alertToast');
-const toast = new bootstrap.Toast(toastEl);
-
-// Fungsi untuk menampilkan alert dengan Toast popup
-function showAlert(message) {
-  document.getElementById('toastMessage').innerText = message;
-  toast.show();
-}
-
-// Tombol OK di Toast untuk sembunyikan Toast
-document.getElementById('toastOkBtn').addEventListener('click', () => {
-  toast.hide();
-});
-
-// Contoh fungsi hitung, ganti alert jadi showAlert
-function hitung() {
-  const airAwal = parseFloat(document.getElementById('airAwal').value);
-  const airBaru = parseFloat(document.getElementById('airBaru').value);
-
-  if (isNaN(airAwal) || airAwal <= 0) {
-    showAlert('Input Air Awal tidak valid! Harap isi dengan angka lebih besar dari 0.');
-    return;
-  }
-  if (isNaN(airBaru) || airBaru <= 0) {
-    showAlert('Input Air Baru tidak valid! Harap isi dengan angka lebih besar dari 0.');
-    return;
-  }
-
-  const container = document.getElementById('bahanContainer');
-  const rows = container.querySelectorAll('.bahan-row');
-
-  let bahanArr = [];
-  for (const row of rows) {
-    const name = row.querySelector('.input-name').value.trim();
-    const amountStr = row.querySelector('.input-amount').value;
-    const amount = parseFloat(amountStr);
-
-    if (!name) {
-      showAlert('Nama bahan tidak boleh kosong.');
-      return;
-    }
-    if (isNaN(amount) || amount < 0) {
-      showAlert(`Takaran bahan "${name}" harus angka positif atau nol.`);
-      return;
-    }
-    bahanArr.push({ name, amount });
-  }
-
-  const ratio = airBaru / airAwal;
-  let output = `<p>Perbandingan takaran dari <strong>${airAwal}</strong> ke <strong>${airBaru}</strong> (ratio: ${ratio.toFixed(2)}):</p>`;
-  output += '<ul>';
-  bahanArr.forEach((bahan) => {
-    const takaranBaru = (bahan.amount * ratio).toFixed(2);
-    output += `<li><strong>${bahan.name}</strong>: ${takaranBaru} gram</li>`;
-  });
-  output += '</ul>';
-
-  // Tampilkan di modal hasil (asumsikan modal sudah ada)
-  document.getElementById('modalBody').innerHTML = output;
-
-  const hasilModal = new bootstrap.Modal(document.getElementById('hasilModal'));
-  hasilModal.show();
-}
 </script>
 
 </body>
 </html>
+

@@ -10,12 +10,9 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); /* Soft, bright gradient */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
-            box-sizing: border-box;
+            display: flex; /* Use flexbox for overall layout */
+            flex-direction: column; /* Stack nav, main, footer vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
             color: #334155;
             overflow-x: hidden;
         }
@@ -212,99 +209,122 @@
     </style>
 </head>
 <body>
-    <div class="calculator-container">
-        <h1>Total Consumption Calculator</h1>
-        <p class="description">
-            This calculator helps you determine the consumption rate of key resources per ton of paper produced. Input the total consumption of fresh water, steam, starch, and power, along with your total paper production.
-            <br>
-            <span class="text-sm text-gray-500">Note: Placeholder values are illustrative estimates, often based on 'Total Today' figures from a production report. Please replace them with your actual operational data for accurate results.</span>
-        </p>
-
-        <div class="input-grid">
-            <div class="input-group">
-                <label for="totalFreshWater">Total Fresh Water Consumed (m³):</label>
-                <input type="number" id="totalFreshWater" class="input-field" placeholder="contoh: 1528.33" step="0.01">
-            </div>
-
-            <div class="input-group">
-                <label for="totalSteam">Total Steam Consumed (ton):</label>
-                <input type="number" id="totalSteam" class="input-field" placeholder="contoh: 379.26" step="0.01">
-            </div>
-
-            <div class="input-group">
-                <label for="totalStarch">Total Starch Consumed (kg):</label>
-                <input type="number" id="totalStarch" class="input-field" placeholder="contoh: 8900.9" step="0.01">
-            </div>
-
-            <div class="input-group">
-                <label for="totalPower">Total Power Consumed (MWh):</label>
-                <input type="number" id="totalPower" class="input-field" placeholder="contoh: 200" step="0.01">
-            </div>
-
-            <div class="input-group">
-                <label for="totalPaperProduction">Total Paper Production (ton):</label>
-                <input type="number" id="totalPaperProduction" class="input-field" placeholder="contoh: 231.78" step="0.01">
-            </div>
+    <nav class="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex justify-between items-center fixed top-0 left-0 z-10">
+        <span class="text-xl font-bold text-blue-700">PaperCalc</span>
+        <div class="space-x-6 text-sm">
+            <a href="https://starch-preparation.netlify.app/" class="hover:underline">Home</a>
+            <a href="https://starch-preparation.netlify.app/about" target="_blank" class="hover:underline">About</a>
+            <a href="https://wa.me/62895410571547" class="hover:underline">Contact</a>
         </div>
+    </nav>
 
-        <button onclick="calculateTotalConsumption()" class="button-primary">Calculate Consumption Per Ton</button>
+    <main class="flex-grow flex justify-center items-center px-4 py-10 mt-20"> <div class="calculator-container">
+            <h1>Total Consumption Calculator</h1>
+            <p class="description">
+                This calculator helps you determine the consumption rate of key resources per ton of paper produced. Input the total consumption of fresh water, steam, starch, and power, along with your total paper production.
+                <br>
+                <span class="text-sm text-gray-500">Note: Placeholder values are illustrative estimates, often based on 'Total Today' figures from a production report. Please replace them with your actual operational data for accurate results.</span>
+            </p>
 
-        <div id="errorMessage" class="error-message hidden"></div>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="totalFreshWater">Total Fresh Water Consumed (m³):</label>
+                    <input type="number" id="totalFreshWater" class="input-field" placeholder="contoh: 1528.33" step="0.01">
+                </div>
 
-        <div id="results" class="result-section hidden">
-            <div class="result-item">Fresh Water Consumption: <strong id="freshWaterPerTon"></strong></div>
-            <div class="result-item">Steam Consumption: <strong id="steamPerTon"></strong></div>
-            <div class="result-item">Starch Consumption: <strong id="starchPerTon"></strong></div>
-            <div class="result-item">Power Consumption: <strong id="powerPerTon"></strong></div>
+                <div class="input-group">
+                    <label for="totalSteam">Total Steam Consumed (ton):</label>
+                    <input type="number" id="totalSteam" class="input-field" placeholder="contoh: 379.26" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label for="totalStarch">Total Starch Consumed (kg):</label>
+                    <input type="number" id="totalStarch" class="input-field" placeholder="contoh: 8900.9" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label for="totalPower">Total Power Consumed (MWh):</label>
+                    <input type="number" id="totalPower" class="input-field" placeholder="contoh: 200" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label for="totalPaperProduction">Total Paper Production (ton):</label>
+                    <input type="number" id="totalPaperProduction" class="input-field" placeholder="contoh: 231.78" step="0.01">
+                </div>
+            </div>
+
+            <button onclick="calculateTotalConsumption()" class="button-primary">Calculate Consumption Per Ton</button>
+
+            <div id="errorMessage" class="error-message hidden"></div>
+
+            <div id="results" class="result-section hidden">
+                <div class="result-item">Fresh Water Consumption: <strong id="freshWaterPerTon"></strong></div>
+                <div class="result-item">Steam Consumption: <strong id="steamPerTon"></strong></div>
+                <div class="result-item">Starch Consumption: <strong id="starchPerTon"></strong></div>
+                <div class="result-item">Power Consumption: <strong id="powerPerTon"></strong></div>
+            </div>
+
+            <a href="https://starch-preparation.netlify.app/" class="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Calculators
+            </a>
+
+            <footer class="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p class="mb-1">&copy; 2025 Total Consumption Calculator. All rights reserved.</p>
+                <p>Developed by <span class="font-semibold text-blue-600">Ardita Rizki Fauzi</span> for <span class="font-semibold text-blue-600">PT Dayasa Aria Prima</span></p>
+            </footer>
         </div>
-
-        <a href="index.html" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Calculators
-        </a>
-    </div>
+    </main>
 
     <script>
+        /**
+         * Calculates the total consumption of resources per ton of paper produced.
+         * This includes fresh water, steam, starch, and power.
+         * Displays the results or an error message if inputs are invalid.
+         */
         function calculateTotalConsumption() {
+            // Get input values from the HTML elements
             const totalFreshWater = parseFloat(document.getElementById('totalFreshWater').value);
             const totalSteam = parseFloat(document.getElementById('totalSteam').value);
             const totalStarch = parseFloat(document.getElementById('totalStarch').value);
             const totalPower = parseFloat(document.getElementById('totalPower').value);
             const totalPaperProduction = parseFloat(document.getElementById('totalPaperProduction').value);
 
+            // Get references to the error message and results display elements
             const errorMessage = document.getElementById('errorMessage');
             const resultsDiv = document.getElementById('results');
 
-            // Reset error message and hide results
+            // Reset error message and hide results before new calculation
             errorMessage.classList.add('hidden');
             resultsDiv.classList.add('hidden');
 
-            // Input validation
+            // Input validation: Check if inputs are valid numbers and within reasonable ranges
             if (isNaN(totalFreshWater) || totalFreshWater < 0 ||
                 isNaN(totalSteam) || totalSteam < 0 ||
                 isNaN(totalStarch) || totalStarch < 0 ||
                 isNaN(totalPower) || totalPower < 0 ||
                 isNaN(totalPaperProduction) || totalPaperProduction <= 0) {
+                // Display an error message if any validation fails
                 errorMessage.textContent = 'Please enter valid non-negative numbers for all consumption values, and a positive number for Total Paper Production.';
                 errorMessage.classList.remove('hidden');
-                return;
+                return; // Stop the function execution if validation fails
             }
 
-            // Calculate consumption per ton
+            // Calculate consumption per ton for each resource
             const freshWaterPerTon = totalFreshWater / totalPaperProduction;
             const steamPerTon = totalSteam / totalPaperProduction;
             const starchPerTon = totalStarch / totalPaperProduction;
             const powerPerTon = totalPower / totalPaperProduction;
 
-            // Display results
+            // Display the calculated results in the respective HTML elements
             document.getElementById('freshWaterPerTon').textContent = `${freshWaterPerTon.toFixed(2)} m³/ton`;
             document.getElementById('steamPerTon').textContent = `${steamPerTon.toFixed(2)} ton/T.Paper`;
             document.getElementById('starchPerTon').textContent = `${starchPerTon.toFixed(2)} kg/ton`;
             document.getElementById('powerPerTon').textContent = `${powerPerTon.toFixed(2)} MWh/ton`;
-            resultsDiv.classList.remove('hidden');
+            resultsDiv.classList.remove('hidden'); // Show the results section
         }
     </script>
 </body>
